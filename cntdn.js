@@ -258,12 +258,13 @@ function solve_numbers(numbers, target, trickshot) {
 }
 
 if (use_console) {
-  input = [0,0,1,1,1,1,1,1,1];
-  console.log("\nCountdown solver\n");
+  input = [0,0,1,1,1,1,1,1,1,0];
   for (n in process.argv) input[n] = parseInt(process.argv[n]);
+  var trickshot = input.pop();
   var target = input.pop();
   input.shift();
   input.shift();
+  console.log("\nCountdown solver, trickhot " + (trickshot == 1)+ "\n");
   console.log('Input', input, 'target', target);
-  console.log(solve_numbers(input, target, false));
+  console.log(solve_numbers(input, target, trickshot == 1));
 }
