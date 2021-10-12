@@ -18,6 +18,10 @@
 
 var use_console = (typeof(run_from_browser) === 'undefined');
 
+function debug_log(text) {
+//  if (use_console) console.log(text);
+}
+
 var bestdiff;
 var bestvalsums;
 var allresults = [];
@@ -43,7 +47,8 @@ var OPCOST = {
 
 function _recurse_solve_numbers(numbers, searchedi, was_generated, target, levels, valsums, trickshot) {
     levels--;
-
+//    debug_log("REC " + levels);
+//    debug_log(numbers);
     for (var i = 0; i < numbers.length-1; i++) {
         var ni = numbers[i];
 
@@ -120,6 +125,8 @@ function tidyup_result(result) {
         "*": true, "+": true
     };
 
+    debug_log("tidyup_result=====================");
+    debug_log(result);
     if (result.length < 4)
         return result;
 
@@ -147,6 +154,9 @@ function tidyup_result(result) {
             result[i] = childs[i-2];
     }
 
+    debug_log("------transformed-----------");
+    debug_log(result);
+    debug_log("------transformed-----------");
     return result;
 }
 
@@ -186,30 +196,34 @@ function serialise_result(result) {
 }
 
 function stringify_result(serialised, target) {
-    var output = '';
+    var output = [];
 
     serialised = serialised.slice(0);
+    var result = serialised[serialised.length-1][0];
+    if (result != target)
+        output.push('====> ' + (Math.abs(result - target)) + ' away');
 
     for (var i = 0; i < serialised.length; i++) {
         var x = serialised[i];
 
         var args = x.slice(2);
-        output += args.join(' ' + x[1] + ' ') + ' = ' + x[0] + '\n';
+        output.push(args.join(' ' + x[1] + ' ') + ' = ' + x[0]);
     }
-
-    var result = serialised[serialised.length-1][0];
-    if (result != target)
-        output += '(off by ' + (Math.abs(result - target)) + ')\n';
-
-    return output;
+    return output.join(' | ');
 }
 
 function _solve_numbers(numbers, target, trickshot) {
+    debug_log("Numbers before map");
+    debug_log(numbers);
     numbers = numbers.map(function(x) { return [x, false] });
-
+    debug_log("Numbers after map");
+    debug_log(numbers);
     var was_generated = [];
-    for (var i = 0; i < numbers.length; i++)
-        was_generated.push(false);
+    for (var i = 0; i < numbers.length; i++) {
+      was_generated.push(false);
+      debug_log("was_generated");
+      debug_log(was_generated);
+    }
 
     bestresult = [0, 0];
 
@@ -220,8 +234,9 @@ function _solve_numbers(numbers, target, trickshot) {
 }
 
 function solve_numbers(numbers, target, trickshot) {
-    numbers.sort();
-    bestresult = [numbers[0], numbers[0]];
+    numbers.sort(function(a, b) {
+      return a - b;
+    });    bestresult = [numbers[0], numbers[0]];
 
     /* see if one of these numbers is the answer; with trickshot you'd rather
      * have an interesting answer that's close than an exact answer
@@ -234,11 +249,13 @@ function solve_numbers(numbers, target, trickshot) {
             }
         }
         if (bestresult[0] == target)
-            return target + " = " + target;
+            return target + " = " + target+"\n";
     }
 
     //return stringify_result(serialise_result(tidyup_result(_solve_numbers(numbers, target, trickshot))), target);
     allresults = [];
+    debug_log("Numbers input to _solve_numbers");
+    debug_log(numbers);
     _solve_numbers(numbers, target, trickshot);
 
     allresults.sort(function(a,b) {
@@ -247,11 +264,13 @@ function solve_numbers(numbers, target, trickshot) {
 
     var s = '';
     var got = {};
+    var best_len = 10000000;
     for (var i = 0; i < allresults.length; i++) {
-        var this_str = stringify_result(serialise_result(tidyup_result(allresults[i].answer)), target) + "\n\n";
-        if (!got[this_str]) {
-            got[this_str] = true;
+        var this_str = stringify_result(serialise_result(tidyup_result(allresults[i].answer)), target)+"\n";
+        var new_len = this_str.length;
+        if (new_len < best_len) {
             s += this_str;
+            best_len = new_len;
         }
     }
     return s;
@@ -264,7 +283,6 @@ if (use_console) {
   var target = input.pop();
   input.shift();
   input.shift();
-  console.log("\nCountdown solver, trickhot " + (trickshot == 1)+ "\n");
-  console.log('Input', input, 'target', target);
+  console.log('Input', input, '  target:', target, '  trickshot:', trickshot == 1);
   console.log(solve_numbers(input, target, trickshot == 1));
 }
