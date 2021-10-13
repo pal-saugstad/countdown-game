@@ -26,6 +26,7 @@ var bestdiff;
 var bestvalsums;
 var allresults = [];
 var bestresult;
+var abs_diff;
 
 var OPS = {
     "+": function(n1, n2) { if (n1 < 0 || n2 < 0) return false; return n1+n2; },
@@ -94,10 +95,11 @@ function _recurse_solve_numbers(numbers, searchedi, was_generated, target, level
                 if (allresults.length == 0 || Math.abs(r-target) <= Math.abs(allresults[0].answer[0]-target))
                     allresults.push(JSON.parse(JSON.stringify({valsums: valsums, answer: [r,o,ni,nj]})));
 
-                if ((Math.abs(r - target) < Math.abs(bestresult[0] - target))
+                if ((Math.abs(r - target) < abs_diff)
                         || (Math.abs(r - target) == Math.abs(bestresult[0] - target) && (trickshot || newvalsums < bestvalsums))) {
                     bestresult = [r,o,ni,nj];
                     bestvalsums = newvalsums;
+                    abs_diff = Math.abs(r - target);
                 }
 
                 numbers[j] = [r, o, ni, nj];
@@ -264,19 +266,22 @@ function _solve_numbers(numbers, target, trickshot) {
 function solve_numbers(numbers, target, trickshot) {
     numbers.sort(function(a, b) {
       return a - b;
-    });    bestresult = [numbers[0], numbers[0]];
+    });
+    bestresult = [0, 0];
+    abs_diff = target;
 
     /* see if one of these numbers is the answer; with trickshot you'd rather
      * have an interesting answer that's close than an exact answer
      */
     if (!trickshot) {
         for (var i = 1; i < numbers.length; i++) {
-            if (Math.abs(numbers[i] - target) < Math.abs(bestresult[0] - target)) {
+            if (Math.abs(numbers[i] - target) < abs_diff) {
                 bestresult = [numbers[i], numbers[i]];
                 bestvalsums = numbers[i];
+                abs_diff = Math.abs(numbers[i] - target);
             }
         }
-        if (bestresult[0] == target)
+        if (abs_diff == 0)
             return target + " = " + target+"\n";
     }
 
