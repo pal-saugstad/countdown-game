@@ -23,7 +23,6 @@ function debug_log(text) {
 }
 
 var bestdiff;
-var bestvalsums;
 var allresults = [];
 var bestresult;
 var abs_diff;
@@ -46,7 +45,7 @@ var OPCOST = {
     "?": 1.3,
 };
 
-function _recurse_solve_numbers(numbers, searchedi, was_generated, target, levels, valsums, trickshot) {
+function _recurse_solve_numbers(numbers, searchedi, was_generated, target, levels) {
     levels--;
 //    debug_log("REC " + levels);
 //    debug_log(numbers);
@@ -88,17 +87,13 @@ function _recurse_solve_numbers(numbers, searchedi, was_generated, target, level
                     op_cost = 1;
                 op_cost *= OPCOST[o];
 
-                var newvalsums = valsums + op_cost;
-
                 if (allresults.length == 0 || Math.abs(r-target) < Math.abs(allresults[0].answer[0]-target))
                     allresults = [];
                 if (allresults.length == 0 || Math.abs(r-target) <= Math.abs(allresults[0].answer[0]-target))
-                    allresults.push(JSON.parse(JSON.stringify({valsums: valsums, answer: [r,o,ni,nj]})));
+                    allresults.push(JSON.parse(JSON.stringify({answer: [r,o,ni,nj]})));
 
-                if ((Math.abs(r - target) < abs_diff)
-                        || (Math.abs(r - target) == Math.abs(bestresult[0] - target) && (trickshot || newvalsums < bestvalsums))) {
+                if (Math.abs(r - target) <= abs_diff) {
                     bestresult = [r,o,ni,nj];
-                    bestvalsums = newvalsums;
                     abs_diff = Math.abs(r - target);
                 }
 
@@ -107,7 +102,7 @@ function _recurse_solve_numbers(numbers, searchedi, was_generated, target, level
                 was_generated[j] = true;
 
                 if (levels > 0)
-                    _recurse_solve_numbers(numbers, i+1, was_generated, target, levels, newvalsums, trickshot);
+                    _recurse_solve_numbers(numbers, i+1, was_generated, target, levels);
 
                 was_generated[j] = old_was_gen;
                 numbers[j] = nj;
@@ -258,7 +253,7 @@ function _solve_numbers(numbers, target, trickshot) {
     bestresult = [0, 0];
 
     /* attempt to solve with dfs */
-    _recurse_solve_numbers(numbers, 0, was_generated, target, numbers.length, 0, trickshot);
+    _recurse_solve_numbers(numbers, 0, was_generated, target, numbers.length);
 
     return bestresult;
 }
@@ -277,7 +272,6 @@ function solve_numbers(numbers, target, trickshot) {
         for (var i = 1; i < numbers.length; i++) {
             if (Math.abs(numbers[i] - target) < abs_diff) {
                 bestresult = [numbers[i], numbers[i]];
-                bestvalsums = numbers[i];
                 abs_diff = Math.abs(numbers[i] - target);
             }
         }
