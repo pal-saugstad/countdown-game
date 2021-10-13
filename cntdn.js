@@ -227,8 +227,6 @@ function stringify_result(serialised, target) {
 
     serialised = serialised.slice(0);
     var result = serialised[serialised.length-1][0];
-    if (result != target)
-        output.push('====> ' + (Math.abs(result - target)) + ' away');
 
     for (var i = 0; i < serialised.length; i++) {
         var x = serialised[i];
@@ -236,7 +234,10 @@ function stringify_result(serialised, target) {
         var args = x.slice(2);
         output.push(args.join(' ' + x[1] + ' ') + ' = ' + x[0]);
     }
-    return output.join(' | ');
+    deviation = ''
+    if (result != target)
+        deviation = ' (' + (Math.abs(result - target)) + ' off)';
+    return output.join(' | ') + deviation;
 }
 
 function _solve_numbers(numbers, target, trickshot) {
@@ -287,6 +288,7 @@ function solve_numbers(numbers, target, trickshot) {
 
     var s = [];
     var got = {};
+    console.log("length =", allresults.length);
      for (var i = 0; i < allresults.length; i++) {
         var this_str = stringify_result(serialise_result(tidyup_result(allresults[i].answer)), target);
         if (!got[this_str]) {
