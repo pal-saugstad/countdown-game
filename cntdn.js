@@ -285,21 +285,20 @@ function solve_numbers(numbers, target, trickshot) {
     debug_log(numbers);
     _solve_numbers(numbers, target, trickshot);
 
-    allresults.sort(function(a,b) {
-        return a.valsums - b.valsums;
-    });
-
-    var s = '';
+    var s = [];
     var got = {};
      for (var i = 0; i < allresults.length; i++) {
-        var this_str = stringify_result(serialise_result(tidyup_result(allresults[i].answer)), target) + "\n";
+        var this_str = stringify_result(serialise_result(tidyup_result(allresults[i].answer)), target);
         if (!got[this_str]) {
             got[this_str] = true;
-            s += this_str;
+            s.push(this_str);
         }
      }
+     s.sort(function(a,b) {
+          return b.length - a.length;
+     });
 
-    return s;
+    return s.join("\n");
 }
 
 if (use_console) {
