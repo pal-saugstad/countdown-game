@@ -174,25 +174,52 @@ function fullsize(array) {
 
 function serialise_result(result) {
     var childparts = [];
+    debug_log("---result---");
+    debug_log(result);
+    debug_log("---result---");
 
     for (var i = 2; i < result.length; i++) {
         var child = result[i];
 
-        if (child.length >= 4)
-            childparts.push(serialise_result(child));
+        if (child.length >= 4) {
+          debug_log("---child---");
+          debug_log(child);
+          debug_log("---child---");
+          if (!isNaN(child[0])) {
+              debug_log('!isNaN')
+              debug_log(child[0])
+              child[0] = child[0] + '_';
+              debug_log(child[0])
+          }
+          childparts.push(serialise_result(child));
+        }
     }
 
     childparts = childparts.sort(function(a,b) { return fullsize(b) - fullsize(a); });
-
+    debug_log("---childparts---");
+    debug_log(childparts);
+    debug_log("---childparts---");
     var parts = [];
     for (var i = 0; i < childparts.length; i++) {
         parts = parts.concat(childparts[i]);
     }
 
-    var sliced = result.slice(2).map(function(l) { return l[0]; });
+    var sliced = result.slice(2).map(function(l) {
+       if ((l.length == 2) && (l[1] == false))
+          return l[0];
+      if (isNaN(l[0])) {
+        res = l[0].split('_');
+        return '_' + res[0];
+      } else {
+        return '_' + l[0];
+      }
+     });
     var thispart = [result[0], result[1]].concat(sliced);
-
-    return parts.concat([thispart]);
+    var ret_val = parts.concat([thispart]);
+    debug_log("---ret_val---");
+    debug_log(ret_val);
+    debug_log("---ret_val---");
+    return ret_val;
 }
 
 function stringify_result(serialised, target) {
@@ -264,15 +291,14 @@ function solve_numbers(numbers, target, trickshot) {
 
     var s = '';
     var got = {};
-    var best_len = 10000000;
-    for (var i = 0; i < allresults.length; i++) {
-        var this_str = stringify_result(serialise_result(tidyup_result(allresults[i].answer)), target)+"\n";
-        var new_len = this_str.length;
-        if (new_len < best_len) {
+     for (var i = 0; i < allresults.length; i++) {
+        var this_str = stringify_result(serialise_result(tidyup_result(allresults[i].answer)), target) + "\n";
+        if (!got[this_str]) {
+            got[this_str] = true;
             s += this_str;
-            best_len = new_len;
         }
-    }
+     }
+
     return s;
 }
 
