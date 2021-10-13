@@ -36,15 +36,6 @@ var OPS = {
     "?": function(n2, n1) { if (n2 == 0 || n1%n2 != 0) return false; return n1/n2; },
 };
 
-var OPCOST = {
-    "+": 1,
-    "-": 1.05,
-    "_": 1.05,
-    "*": 1.2,
-    "/": 1.3,
-    "?": 1.3,
-};
-
 function _recurse_solve_numbers(numbers, searchedi, was_generated, target, levels) {
     levels--;
 //    debug_log("REC " + levels);
@@ -79,13 +70,6 @@ function _recurse_solve_numbers(numbers, searchedi, was_generated, target, level
                     continue;
                 if (r == ni[0] || r == nj[0])
                     continue;
-
-                var op_cost = Math.abs(r);
-                while (op_cost % 10 == 0 && op_cost != 0)
-                    op_cost /= 10;
-                if ((ni[0] == 10 || nj[0] == 10) && o == '*') // HACK: multiplication by 10 is cheap
-                    op_cost = 1;
-                op_cost *= OPCOST[o];
 
                 if (allresults.length == 0 || Math.abs(r-target) < Math.abs(allresults[0].answer[0]-target))
                     allresults = [];
