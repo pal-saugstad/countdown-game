@@ -60,14 +60,16 @@ function _recurse_solve_numbers(numbers, searchedi, was_generated, target, level
                 var r = OPS[o](ni[0], nj[0]);
                 if (r === false)
                     continue;
-
-                if (allresults.length > 0 && Math.abs(r-target) < Math.abs(allresults[0].answer[0]-target))
+                var new_abs_diff = Math.abs(r-target);
+                var right_compare = 0;
+                if (allresults.length > 0) right_compare = Math.abs(allresults[0].answer[0]-target);
+                if (new_abs_diff < right_compare)
                     allresults = [];
-                if (allresults.length == 0 || Math.abs(r-target) <= Math.abs(allresults[0].answer[0]-target))
+                if (allresults.length == 0 || new_abs_diff <= right_compare)
                     allresults.push(JSON.parse(JSON.stringify({answer: [r,o,ni,nj]})));
 
-                if (Math.abs(r - target) <= abs_diff) {
-                    abs_diff = Math.abs(r - target);
+                if (new_abs_diff <= abs_diff) {
+                    abs_diff = new_abs_diff;
                 }
 
                 numbers[j] = [r, o, ni, nj];
