@@ -24,7 +24,6 @@ function debug_log(text) {
 
 var bestdiff;
 var allresults = [];
-var bestresult;
 var abs_diff;
 
 var OPS = {
@@ -71,13 +70,12 @@ function _recurse_solve_numbers(numbers, searchedi, was_generated, target, level
                 if (r == ni[0] || r == nj[0])
                     continue;
 
-                if (allresults.length == 0 || Math.abs(r-target) < Math.abs(allresults[0].answer[0]-target))
+                if (allresults.length > 0 && Math.abs(r-target) < Math.abs(allresults[0].answer[0]-target))
                     allresults = [];
                 if (allresults.length == 0 || Math.abs(r-target) <= Math.abs(allresults[0].answer[0]-target))
                     allresults.push(JSON.parse(JSON.stringify({answer: [r,o,ni,nj]})));
 
                 if (Math.abs(r - target) <= abs_diff) {
-                    bestresult = [r,o,ni,nj];
                     abs_diff = Math.abs(r - target);
                 }
 
@@ -234,19 +232,15 @@ function _solve_numbers(numbers, target, trickshot) {
       debug_log(was_generated);
     }
 
-    bestresult = [0, 0];
-
     /* attempt to solve with dfs */
     _recurse_solve_numbers(numbers, 0, was_generated, target, numbers.length);
 
-    return bestresult;
 }
 
 function solve_numbers(numbers, target, trickshot) {
     numbers.sort(function(a, b) {
       return a - b;
     });
-    bestresult = [0, 0];
     abs_diff = target;
 
     /* see if one of these numbers is the answer; with trickshot you'd rather
@@ -255,7 +249,6 @@ function solve_numbers(numbers, target, trickshot) {
     if (!trickshot) {
         for (var i = 1; i < numbers.length; i++) {
             if (Math.abs(numbers[i] - target) < abs_diff) {
-                bestresult = [numbers[i], numbers[i]];
                 abs_diff = Math.abs(numbers[i] - target);
             }
         }
