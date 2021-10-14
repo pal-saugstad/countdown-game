@@ -128,18 +128,6 @@ function tidyup_result(result) {
     return result;
 }
 
-function fullsize(array) {
-    if (array.constructor != Array)
-        return 0;
-
-    var l = 0;
-
-    for (var i = 0; i < array.length; i++)
-        l += fullsize(array[i]);
-
-    return l + array.length;
-}
-
 function serialise_result(result) {
     var childparts = [];
     debug_log("---result---");
@@ -163,7 +151,6 @@ function serialise_result(result) {
         }
     }
 
-    childparts = childparts.sort(function(a,b) { return fullsize(b) - fullsize(a); });
     debug_log("---childparts---");
     debug_log(childparts);
     debug_log("---childparts---");
