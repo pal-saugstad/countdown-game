@@ -36,7 +36,6 @@ var OPS = {
 };
 
 function _recurse_solve_numbers(numbers, searchedi, was_generated, target, levels) {
-    levels--;
 //    debug_log("REC " + levels);
 //    debug_log(numbers);
     for (var i = 0; i < numbers.length-1; i++) {
@@ -68,15 +67,14 @@ function _recurse_solve_numbers(numbers, searchedi, was_generated, target, level
                 if (new_abs_diff == abs_diff)
                   allresults.push(JSON.parse(JSON.stringify({answer: [r,o,ni,nj]})));
 
-                numbers[j] = [r, o, ni, nj];
-                var old_was_gen = was_generated[j];
-                was_generated[j] = true;
-
-                if (levels > 0)
-                    _recurse_solve_numbers(numbers, i+1, was_generated, target, levels);
-
-                was_generated[j] = old_was_gen;
-                numbers[j] = nj;
+                if (levels > 1) {
+                  numbers[j] = [r, o, ni, nj];
+                  var old_was_gen = was_generated[j];
+                  was_generated[j] = true;
+                  _recurse_solve_numbers(numbers, i+1, was_generated, target, levels-1);
+                  was_generated[j] = old_was_gen;
+                  numbers[j] = nj;
+                }
             }
         }
 
