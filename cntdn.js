@@ -27,12 +27,12 @@ var allresults = [];
 var abs_diff;
 
 var OPS = {
-    "+": function(n1, n2) { if (n1 < 0 || n2 < 0) return false; return n1+n2; },
+    "+": function(n1, n2) { return n1+n2; },
     "-": function(n1, n2) { if (n2 >= n1) return false; return n1-n2; },
     "_": function(n2, n1) { if (n2 >= n1) return false; return n1-n2; },
-    "*": function(n1, n2) { return n1*n2; },
-    "/": function(n1, n2) { if (n2 == 0 || n1%n2 != 0) return false; return n1/n2; },
-    "?": function(n2, n1) { if (n2 == 0 || n1%n2 != 0) return false; return n1/n2; },
+    "*": function(n1, n2) { if (n2 < 2 || n1 < 2) return false; return n1*n2; },
+    "/": function(n1, n2) { if (n2 < 2 || n1%n2 != 0) return false; return n1/n2; },
+    "?": function(n2, n1) { if (n2 < 2 || n1%n2 != 0) return false; return n1/n2; },
 };
 
 function _recurse_solve_numbers(numbers, searchedi, was_generated, target, levels) {
@@ -59,15 +59,6 @@ function _recurse_solve_numbers(numbers, searchedi, was_generated, target, level
             for (var o in OPS) {
                 var r = OPS[o](ni[0], nj[0]);
                 if (r === false)
-                    continue;
-
-                if (o == '/' && nj[0] == 1)
-                    continue;
-                if (o == '?' && ni[0] == 1)
-                    continue;
-                if (o == '*' && (ni[0] == 1 || nj[0] == 1))
-                    continue;
-                if (r == ni[0] || r == nj[0])
                     continue;
 
                 if (allresults.length > 0 && Math.abs(r-target) < Math.abs(allresults[0].answer[0]-target))
