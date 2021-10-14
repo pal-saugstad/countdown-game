@@ -61,12 +61,12 @@ function _recurse_solve_numbers(numbers, searchedi, was_generated, target, level
                 if (r === false)
                     continue;
                 var new_abs_diff = Math.abs(r-target);
-                if (new_abs_diff < abs_diff)
-                    allresults = [];
-                if (new_abs_diff <= abs_diff) {
-                  allresults.push(JSON.parse(JSON.stringify({answer: [r,o,ni,nj]})));
+                if (new_abs_diff < abs_diff) {
+                  allresults = [];
                   abs_diff = new_abs_diff;
                 }
+                if (new_abs_diff == abs_diff)
+                  allresults.push(JSON.parse(JSON.stringify({answer: [r,o,ni,nj]})));
 
                 numbers[j] = [r, o, ni, nj];
                 var old_was_gen = was_generated[j];
