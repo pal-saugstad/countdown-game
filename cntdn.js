@@ -187,9 +187,7 @@ function _solve_numbers(numbers, target, trickshot) {
 }
 
 function solve_numbers(numbers, target, trickshot) {
-    numbers.sort(function(a, b) {
-      return a - b;
-    });
+
     abs_diff = target;
 
     /* see if one of these numbers is the answer; with trickshot you'd rather
