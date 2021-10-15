@@ -37,8 +37,6 @@ var OPS = {
 };
 
 function _recurse_solve_numbers(numbers, searchedi, was_generated, target, levels) {
-//    debug_log("REC " + levels);
-//    debug_log(numbers);
     for (var i = 0; i < numbers.length-1; i++) {
         var ni = numbers[i];
 
@@ -93,8 +91,6 @@ function tidyup_result(result) {
         "*": true, "+": true
     };
 
-    debug_log("tidyup_result=====================");
-    debug_log(result);
     if (result.length < 4)
         return result;
 
@@ -122,38 +118,23 @@ function tidyup_result(result) {
             result[i] = childs[i-2];
     }
 
-    debug_log("------transformed-----------");
-    debug_log(result);
-    debug_log("------transformed-----------");
     return result;
 }
 
 function serialise_result(result) {
     var childparts = [];
-    debug_log("---result---");
-    debug_log(result);
-    debug_log("---result---");
 
     for (var i = 2; i < result.length; i++) {
         var child = result[i];
 
         if (child.length >= 4) {
-          debug_log("---child---");
-          debug_log(child);
-          debug_log("---child---");
           if (!isNaN(child[0])) {
-              debug_log('!isNaN')
-              debug_log(child[0])
               child[0] = child[0] + '_';
-              debug_log(child[0])
           }
           childparts.push(serialise_result(child));
         }
     }
 
-    debug_log("---childparts---");
-    debug_log(childparts);
-    debug_log("---childparts---");
     var parts = [];
     for (var i = 0; i < childparts.length; i++) {
         parts = parts.concat(childparts[i]);
@@ -170,11 +151,8 @@ function serialise_result(result) {
       }
      });
     var thispart = [result[0], result[1]].concat(sliced);
-    var ret_val = parts.concat([thispart]);
-    debug_log("---ret_val---");
-    debug_log(ret_val);
-    debug_log("---ret_val---");
-    return ret_val;
+
+    return parts.concat([thispart]);
 }
 
 function stringify_result(serialised, target) {
@@ -196,17 +174,12 @@ function stringify_result(serialised, target) {
 }
 
 function _solve_numbers(numbers, target, trickshot) {
-    debug_log("Numbers before map");
-    debug_log(numbers);
     numbers = numbers.map(function(x) { return [x, false] });
-    debug_log("Numbers after map");
-    debug_log(numbers);
+
     var was_generated = [];
-    for (var i = 0; i < numbers.length; i++) {
+    for (var i = 0; i < numbers.length; i++)
       was_generated.push(false);
-      debug_log("was_generated");
-      debug_log(was_generated);
-    }
+
 
     /* attempt to solve with dfs */
     _recurse_solve_numbers(numbers, 0, was_generated, target, numbers.length);
@@ -234,13 +207,10 @@ function solve_numbers(numbers, target, trickshot) {
 
     //return stringify_result(serialise_result(tidyup_result(_solve_numbers(numbers, target, trickshot))), target);
     allresults = [];
-    debug_log("Numbers input to _solve_numbers");
-    debug_log(numbers);
     _solve_numbers(numbers, target, trickshot);
 
     var s = [];
     var got = {};
-    console.log("length =", allresults.length);
      for (var i = 0; i < allresults.length; i++) {
         var this_str = stringify_result(serialise_result(tidyup_result(allresults[i].answer)), target);
         if (!got[this_str]) {
