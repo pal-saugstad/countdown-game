@@ -28,12 +28,12 @@ var abs_diff;
 var calculations = 0;
 
 var OPS = {
-    "+": function(n1, n2) { return n1+n2; },
-    "-": function(n1, n2) { if (n2 >= n1) return false; return n1-n2; },
-    "_": function(n2, n1) { if (n2 >= n1) return false; return n1-n2; },
-    "*": function(n1, n2) { if (n2 < 2 || n1 < 2) return false; return n1*n2; },
-    "/": function(n1, n2) { if (n2 < 2 || n1%n2 != 0) return false; return n1/n2; },
-    "?": function(n2, n1) { if (n2 < 2 || n1%n2 != 0) return false; return n1/n2; },
+    "+": function(n1, n2) { return [n1[0]+n2[0], '+', n2, n1]; },
+    "-": function(n1, n2) { if (n2[0] >= n1[0]) return false; return [n1[0]-n2[0], '-', n1, n2]; },
+    "_": function(n2, n1) { if (n2[0] >= n1[0]) return false; return [n1[0]-n2[0], '-', n1, n2]; },
+    "*": function(n1, n2) { if (n2[0] < 2 || n1[0] < 2) return false; return [n1[0]*n2[0], '*', n2, n1]; },
+    "/": function(n1, n2) { if (n2[0] < 2 || n1[0]%n2[0] != 0) return false; return [n1[0]/n2[0], '/', n1, n2]; },
+    "?": function(n2, n1) { if (n2[0] < 2 || n1[0]%n2[0] != 0) return false; return [n1[0]/n2[0], '/', n1, n2]; },
 };
 
 function _recurse_solve_numbers(numbers, searchedi, was_generated, target, levels) {
@@ -55,20 +55,20 @@ function _recurse_solve_numbers(numbers, searchedi, was_generated, target, level
                 continue;
 
             for (var o in OPS) {
-                var r = OPS[o](ni[0], nj[0]);
+                var r = OPS[o](ni, nj);
                 if (r === false)
                     continue;
-                var new_abs_diff = Math.abs(r-target);
+                var new_abs_diff = Math.abs(r[0]-target);
                 calculations++;
                 if (new_abs_diff < abs_diff) {
                   allresults = [];
                   abs_diff = new_abs_diff;
                 }
                 if (new_abs_diff == abs_diff)
-                  allresults.push(JSON.parse(JSON.stringify({answer: [r,o,ni,nj]})));
+                  allresults.push(JSON.parse(JSON.stringify(r)));
 
                 if (levels > 1) {
-                  numbers[j] = [r, o, ni, nj];
+                  numbers[j] = r;
                   var old_was_gen = was_generated[j];
                   was_generated[j] = true;
                   _recurse_solve_numbers(numbers, i+1, was_generated, target, levels-1);
@@ -207,7 +207,7 @@ function solve_numbers(numbers, target, show_all) {
 
     var got = {};
      for (var i = 0; i < allresults.length; i++) {
-        var this_str = stringify_result(serialise_result(tidyup_result(allresults[i].answer)), target);
+        var this_str = stringify_result(serialise_result(tidyup_result(allresults[i])), target);
         if (!got[this_str]) {
             got[this_str] = true;
             s.push(this_str);
