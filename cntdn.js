@@ -25,6 +25,7 @@ function debug_log(text) {
 var bestdiff;
 var allresults = [];
 var abs_diff;
+var calculations = 0;
 
 var OPS = {
     "+": function(n1, n2) { return n1+n2; },
@@ -60,6 +61,7 @@ function _recurse_solve_numbers(numbers, searchedi, was_generated, target, level
                 if (r === false)
                     continue;
                 var new_abs_diff = Math.abs(r-target);
+                calculations++;
                 if (new_abs_diff < abs_diff) {
                   allresults = [];
                   abs_diff = new_abs_diff;
@@ -249,6 +251,7 @@ function solve_numbers(numbers, target, trickshot) {
      s.sort(function(a,b) {
           return b.length - a.length;
      });
+     s.push("Calculations = " + calculations + " Length = " + allresults.length);
 
     return s.join("\n");
 }
