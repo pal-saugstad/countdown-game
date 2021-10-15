@@ -193,21 +193,21 @@ function solve_numbers(numbers, target, trickshot) {
     /* see if one of these numbers is the answer; with trickshot you'd rather
      * have an interesting answer that's close than an exact answer
      */
-    if (!trickshot) {
+     allresults = [];
+     var s = [];
         for (var i = 1; i < numbers.length; i++) {
-            if (Math.abs(numbers[i] - target) < abs_diff) {
-                abs_diff = Math.abs(numbers[i] - target);
+            var new_abs_diff = Math.abs(numbers[i] - target)
+            if (new_abs_diff < abs_diff) {
+              allresults = [];
+              abs_diff = new_abs_diff;
             }
+            if (new_abs_diff == 0)
+              s.push(numbers[i] + ' = ' + target);
         }
-        if (abs_diff == 0)
-            return target + " = " + target+"\n";
-    }
 
     //return stringify_result(serialise_result(tidyup_result(_solve_numbers(numbers, target, trickshot))), target);
-    allresults = [];
     _solve_numbers(numbers, target, trickshot);
 
-    var s = [];
     var got = {};
      for (var i = 0; i < allresults.length; i++) {
         var this_str = stringify_result(serialise_result(tidyup_result(allresults[i].answer)), target);
@@ -219,8 +219,11 @@ function solve_numbers(numbers, target, trickshot) {
      s.sort(function(a,b) {
           return b.length - a.length;
      });
-     s.push("Calculations = " + calculations + " Length = " + allresults.length);
-
+     no_of_same_res = s.length;
+     if (!trickshot) {
+       s = [ s[s.length - 1] ];
+     }
+     s.push("Calculations = " + calculations + " Result pool = " + allresults.length+ " Results = " + no_of_same_res );
     return s.join("\n");
 }
 
