@@ -173,7 +173,7 @@ function stringify_result(serialised, target) {
     return output.join(' | ') + deviation;
 }
 
-function _solve_numbers(numbers, target, trickshot) {
+function _solve_numbers(numbers, target) {
     numbers = numbers.map(function(x) { return [x, false] });
 
     var was_generated = [];
@@ -186,16 +186,13 @@ function _solve_numbers(numbers, target, trickshot) {
 
 }
 
-function solve_numbers(numbers, target, trickshot) {
+function solve_numbers(numbers, target, show_all) {
 
-    abs_diff = target;
+     abs_diff = target;
 
-    /* see if one of these numbers is the answer; with trickshot you'd rather
-     * have an interesting answer that's close than an exact answer
-     */
      allresults = [];
      var s = [];
-        for (var i = 1; i < numbers.length; i++) {
+        for (var i = 0; i < numbers.length && s.length == 0; i++) {
             var new_abs_diff = Math.abs(numbers[i] - target)
             if (new_abs_diff < abs_diff) {
               allresults = [];
@@ -205,8 +202,8 @@ function solve_numbers(numbers, target, trickshot) {
               s.push(numbers[i] + ' = ' + target);
         }
 
-    //return stringify_result(serialise_result(tidyup_result(_solve_numbers(numbers, target, trickshot))), target);
-    _solve_numbers(numbers, target, trickshot);
+    //return stringify_result(serialise_result(tidyup_result(_solve_numbers(numbers, target, show_all))), target);
+    _solve_numbers(numbers, target);
 
     var got = {};
      for (var i = 0; i < allresults.length; i++) {
@@ -220,7 +217,7 @@ function solve_numbers(numbers, target, trickshot) {
           return b.length - a.length;
      });
      no_of_same_res = s.length;
-     if (!trickshot) {
+     if (!show_all) {
        s = [ s[s.length - 1] ];
      }
      s.push("Calculations = " + calculations + " Result pool = " + allresults.length+ " Results = " + no_of_same_res );
@@ -230,10 +227,10 @@ function solve_numbers(numbers, target, trickshot) {
 if (use_console) {
   input = [0,0,1,1,1,1,1,1,1,0];
   for (n in process.argv) input[n] = parseInt(process.argv[n]);
-  var trickshot = input.pop();
+  var show_all = input.pop();
   var target = input.pop();
   input.shift();
   input.shift();
-  console.log('Input', input, '  target:', target, '  trickshot:', trickshot == 1);
-  console.log(solve_numbers(input, target, trickshot == 1));
+  console.log('Input', input, '  target:', target, '  show all results (1/0):', show_all == 1);
+  console.log(solve_numbers(input, target, show_all == 1));
 }
