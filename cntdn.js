@@ -83,10 +83,6 @@ function _recurse_solve_numbers(numbers, searchedi, was_generated, target, level
 }
 
 function tidyup_result(result) {
-    var mapping = {
-        "?": "/", "_": "-"
-    };
-
     var swappable = {
         "*": true, "+": true
     };
@@ -107,12 +103,7 @@ function tidyup_result(result) {
         }
     }
 
-    if (result[1] in mapping) {
-        result[1] = mapping[result[1]];
-        var j = result[2];
-        result[2] = result[3];
-        result[3] = j;
-    } else if (swappable[result[1]]) {
+    if (swappable[result[1]]) {
         childs = result.slice(2).sort(function(a,b) { return b[0] - a[0]; });
         for (var i = 2; i < result.length; i++)
             result[i] = childs[i-2];
