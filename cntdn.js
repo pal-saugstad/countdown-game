@@ -7,6 +7,17 @@
 
 // Letters part of original file is now found in the file letters.js
 
+/*
+ This javascript can be run as a standalone file from command line when using
+ a command line javascript interpreter (JavaScript shell) like nodejs
+
+ In addition, this file can be part of a html/javascript web server installation.
+ If so, a global variable, 'run_from_browser' must in defined in another javascript file.
+ The effect of that is that the variable 'use_console' becomes false (see below).
+ */
+
+var use_console = (typeof(run_from_browser) === 'undefined');
+
 var bestdiff;
 var bestvalsums;
 var allresults = [];
@@ -244,4 +255,15 @@ function solve_numbers(numbers, target, trickshot) {
         }
     }
     return s;
+}
+
+if (use_console) {
+  input = [0,0,1,1,1,1,1,1,1];
+  console.log("\nCountdown solver\n");
+  for (n in process.argv) input[n] = parseInt(process.argv[n]);
+  var target = input.pop();
+  input.shift();
+  input.shift();
+  console.log('Input', input, 'target', target);
+  console.log(solve_numbers(input, target, false));
 }
