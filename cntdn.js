@@ -22,7 +22,6 @@ function debug_log(text) {
 //  if (use_console) console.log(text);
 }
 
-var bestdiff;
 var allresults = [];
 var abs_diff;
 var calculations = 0;
@@ -65,7 +64,7 @@ function _recurse_solve_numbers(numbers, searchedi, was_generated, target, level
                   abs_diff = new_abs_diff;
                 }
                 if (new_abs_diff == abs_diff)
-                  allresults.push(JSON.parse(JSON.stringify(r)));
+                  allresults.push(JSON.stringify(r));
 
                 if (levels > 1) {
                   numbers[j] = r;
@@ -193,12 +192,11 @@ function solve_numbers(numbers, target, show_all) {
               s.push(numbers[i] + ' = ' + target);
         }
 
-    //return stringify_result(serialise_result(tidyup_result(_solve_numbers(numbers, target, show_all))), target);
     _solve_numbers(numbers, target);
 
     var got = {};
-     for (var i = 0; i < allresults.length; i++) {
-        var this_str = stringify_result(serialise_result(tidyup_result(allresults[i])), target);
+     for (const result of allresults) {
+        var this_str = stringify_result(serialise_result(tidyup_result(JSON.parse(result))), target);
         if (!got[this_str]) {
             got[this_str] = true;
             s.push(this_str);
