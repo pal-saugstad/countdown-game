@@ -169,7 +169,7 @@ function stringify_result(serialised, target) {
     }
     deviation = ''
     if (result != target)
-        deviation = ' (' + (Math.abs(result - target)) + ' off)';
+        deviation = ' (off by ' + (Math.abs(result - target)) + ')';
     return output.join(' | ') + deviation;
 }
 
