@@ -182,45 +182,47 @@ function _solve_numbers(numbers, target) {
 
 function solve_numbers(numbers, target, show_all, format) {
 
-     abs_diff = target;
+    abs_diff = Math.abs(numbers[0] - target) + 1;
 
-     allresults = [];
-     var s = [];
-        for (var i = 0; i < numbers.length && s.length == 0; i++) {
-            var new_abs_diff = Math.abs(numbers[i] - target)
-            if (new_abs_diff < abs_diff) {
-              allresults = [];
-              abs_diff = new_abs_diff;
-            }
-            if (new_abs_diff == 0)
-              s.push(numbers[i] + ' = ' + target);
-        }
-
+    allresults = [];
     _solve_numbers(numbers, target);
+
+    var s = [];
+    for (var val of numbers) {
+        var new_abs_diff = Math.abs(val - target);
+        if (new_abs_diff <= abs_diff) {
+          if (new_abs_diff < abs_diff)
+             allresults = [];
+          if (new_abs_diff == 0 || allresults.length == 0)
+            s[0] = val + ' = ' + val;
+          abs_diff = new_abs_diff;
+        }
+    }
 
     deviation = ''
     if (abs_diff)
         deviation = ' (off by ' + abs_diff + ')';
-    var got = {};
-    var equals = JSON.parse(allresults[0])[0];
-     if (format) {
-       for (const result of allresults) {
-         var this_str = stringify_result2(tidyup_result(JSON.parse(result)));
-         if (!got[this_str]) {
-             got[this_str] = true;
-             s.push(this_str + ' = ' + equals + deviation);
+    if (allresults.length > 0) {
+      var got = {};
+      var equals = JSON.parse(allresults[0])[0];
+       if (format) {
+         for (const result of allresults) {
+           var this_str = stringify_result2(tidyup_result(JSON.parse(result)));
+           if (!got[this_str]) {
+               got[this_str] = true;
+               s.push(this_str + ' = ' + equals + deviation);
+           }
+         }
+       } else {
+         for (const result of allresults) {
+           var this_str = stringify_result(serialise_result(tidyup_result(JSON.parse(result))));
+           if (!got[this_str]) {
+               got[this_str] = true;
+               s.push(this_str + deviation);
+           }
          }
        }
-     } else {
-       for (const result of allresults) {
-         var this_str = stringify_result(serialise_result(tidyup_result(JSON.parse(result))));
-         if (!got[this_str]) {
-             got[this_str] = true;
-             s.push(this_str + deviation);
-         }
-
-       }
-     }
+    }
      s.sort(function(a,b) {
           return b.length - a.length;
      });
