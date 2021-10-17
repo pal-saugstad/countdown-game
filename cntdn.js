@@ -118,9 +118,7 @@ function serialise_result(result) {
         var child = result[i];
 
         if (child.length >= 4) {
-          if (!isNaN(child[0])) {
-              child[0] = child[0] + '_';
-          }
+          child[0] = '_' + child[0];
           childparts.push(serialise_result(child));
         }
     }
@@ -131,16 +129,12 @@ function serialise_result(result) {
     }
 
     var sliced = result.slice(2).map(function(l) {
-       if ((l.length == 2) && (l[1] == false))
           return l[0];
-      if (isNaN(l[0])) {
-        res = l[0].split('_');
-        return '_' + res[0];
-      } else {
-        return '_' + l[0];
-      }
      });
-    var thispart = [result[0], result[1]].concat(sliced);
+     var r = result[0];
+     if (isNaN(r))
+         r = r.split('_')[1]+'_';
+    var thispart = [r, result[1]].concat(sliced);
 
     return parts.concat([thispart]);
 }
@@ -148,7 +142,6 @@ function serialise_result(result) {
 function stringify_result(serialised, target) {
     var output = [];
 
-    serialised = serialised.slice(0);
     var result = serialised[serialised.length-1][0];
 
     for (var i = 0; i < serialised.length; i++) {
@@ -164,7 +157,7 @@ function stringify_result(serialised, target) {
 }
 
 function _solve_numbers(numbers, target) {
-    numbers = numbers.map(function(x) { return [x, false] });
+    numbers = numbers.map(function(x) { return [x] });
 
     var was_generated = [];
     for (var i = 0; i < numbers.length; i++)
