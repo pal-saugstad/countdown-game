@@ -233,13 +233,34 @@ function solve_numbers(numbers, target, show_all, format) {
 }
 
 if (use_console) {
-  input = [0,0,1,1,1,1,1,1,1,0,0];
+  input = [0,0,'-h',1,1,1,1,1,1,0,0];
   for (n in process.argv) input[n] = parseInt(process.argv[n]);
   var format = input.pop();
   var show_all = input.pop();
   var target = input.pop();
   input.shift();
   input.shift();
-  console.log('Input', input, ', Target:', target, ', Show:', show_all == 1 ? 'All results' : 'Best result', ", Format:", format == 1 ? 'Parentesis' : 'Intermediate results' );
-  console.log(solve_numbers(input, target, show_all == 1, format == 1));
+  var help = input[0] == '-h';
+  if (!help) {
+    for (val of input) {
+      if (isNaN(val)) {
+        help = true;
+        console.log("\nCheck input syntax!")
+      } else if (val < 0) {
+        help = true;
+        console.log("\nNegative number not allowed");
+      }
+    }
+  }
+  if (help) {
+    console.log("\nCountdown Solver\n");
+    console.log("First six parameters: Input values");
+    console.log("Seventh parameter:    Target value");
+    console.log("Eight parameter:      If 0 or absent: Show best solution, if 1: Show all solutions");
+    console.log("Ninth parameter:      If 0 or absent: Use small equations with intermediate results, if 1: Use parenteses");
+
+  } else {
+    console.log('Input', input, ', Target:', target, ', Show:', show_all == 1 ? 'All results' : 'Best result', ", Format:", format == 1 ? 'Parentesis' : 'Intermediate results' );
+    console.log(solve_numbers(input, target, show_all == 1, format == 1));
+  }
 }
