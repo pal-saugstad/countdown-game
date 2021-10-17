@@ -252,6 +252,22 @@ if (use_console) {
       }
     }
   }
+  input.sort(function(a,b) {
+      return a - b;
+    }
+  );
+  slice_start = 0;
+  for (val of input) {
+    if (val > 0) break;
+    slice_start ++;
+  }
+  if (slice_start) {
+    if (slice_start > 3) {
+      help = true;
+      console.log("\nToo few positive numbers to work with");
+    }
+    input = input.slice(slice_start);
+  }
   if (help) {
     console.log("\nCountdown Solver\n");
     console.log("First six parameters: Input values");
