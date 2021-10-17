@@ -129,7 +129,7 @@ function serialise_result(result) {
     }
 
     var sliced = result.slice(2).map(function(l) {
-          return l[0];
+       return l[0];
      });
      var r = result[0];
      if (isNaN(r))
@@ -153,6 +153,20 @@ function stringify_result(serialised) {
     return output.join(' | ');
 }
 
+function stringify_result2(result) {
+
+    var parts = [];
+    for (var i = 2; i < result.length; i++) {
+        var child = result[i];
+        if (child.length == 1)
+              parts.push(child[0]);
+        else
+             parts.push('(' + stringify_result2(child) + ')');
+    }
+
+    return parts.join(' ' + result[1] + ' ');
+}
+
 function _solve_numbers(numbers, target) {
     numbers = numbers.map(function(x) { return [x] });
 
@@ -166,7 +180,7 @@ function _solve_numbers(numbers, target) {
 
 }
 
-function solve_numbers(numbers, target, show_all) {
+function solve_numbers(numbers, target, show_all, format) {
 
      abs_diff = target;
 
@@ -188,12 +202,24 @@ function solve_numbers(numbers, target, show_all) {
     if (abs_diff)
         deviation = ' (off by ' + abs_diff + ')';
     var got = {};
-     for (const result of allresults) {
-        var this_str = stringify_result(serialise_result(tidyup_result(JSON.parse(result))));
-        if (!got[this_str]) {
-            got[this_str] = true;
-            s.push(this_str + deviation);
-        }
+    var equals = JSON.parse(allresults[0])[0];
+     if (format) {
+       for (const result of allresults) {
+         var this_str = stringify_result2(tidyup_result(JSON.parse(result)));
+         if (!got[this_str]) {
+             got[this_str] = true;
+             s.push(this_str + ' = ' + equals + deviation);
+         }
+       }
+     } else {
+       for (const result of allresults) {
+         var this_str = stringify_result(serialise_result(tidyup_result(JSON.parse(result))));
+         if (!got[this_str]) {
+             got[this_str] = true;
+             s.push(this_str + deviation);
+         }
+
+       }
      }
      s.sort(function(a,b) {
           return b.length - a.length;
@@ -207,12 +233,13 @@ function solve_numbers(numbers, target, show_all) {
 }
 
 if (use_console) {
-  input = [0,0,1,1,1,1,1,1,1,0];
+  input = [0,0,1,1,1,1,1,1,1,0,0];
   for (n in process.argv) input[n] = parseInt(process.argv[n]);
+  var format = input.pop();
   var show_all = input.pop();
   var target = input.pop();
   input.shift();
   input.shift();
-  console.log('Input', input, '  target:', target, '  show all results (1/0):', show_all == 1);
-  console.log(solve_numbers(input, target, show_all == 1));
+  console.log('Input', input, ', Target:', target, ', Show:', show_all == 1 ? 'All results' : 'Best result', ", Format:", format == 1 ? 'Parentesis' : 'Intermediate results' );
+  console.log(solve_numbers(input, target, show_all == 1, format == 1));
 }
