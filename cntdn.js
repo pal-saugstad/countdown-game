@@ -139,7 +139,7 @@ function serialise_result(result) {
     return parts.concat([thispart]);
 }
 
-function stringify_result(serialised, target) {
+function stringify_result(serialised) {
     var output = [];
 
     var result = serialised[serialised.length-1][0];
@@ -150,10 +150,7 @@ function stringify_result(serialised, target) {
         var args = x.slice(2);
         output.push(args.join(' ' + x[1] + ' ') + ' = ' + x[0]);
     }
-    deviation = ''
-    if (result != target)
-        deviation = ' (off by ' + (Math.abs(result - target)) + ')';
-    return output.join(' | ') + deviation;
+    return output.join(' | ');
 }
 
 function _solve_numbers(numbers, target) {
@@ -187,12 +184,15 @@ function solve_numbers(numbers, target, show_all) {
 
     _solve_numbers(numbers, target);
 
+    deviation = ''
+    if (abs_diff)
+        deviation = ' (off by ' + abs_diff + ')';
     var got = {};
      for (const result of allresults) {
-        var this_str = stringify_result(serialise_result(tidyup_result(JSON.parse(result))), target);
+        var this_str = stringify_result(serialise_result(tidyup_result(JSON.parse(result))));
         if (!got[this_str]) {
             got[this_str] = true;
-            s.push(this_str);
+            s.push(this_str + deviation);
         }
      }
      s.sort(function(a,b) {
