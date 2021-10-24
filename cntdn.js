@@ -209,7 +209,7 @@ function solve_numbers(numbers, target, show_all) {
         var this_str = stringify_result2(tidyup_result(JSON.parse(result)));
         if (!got[this_str]) {
            got[this_str] = true;
-           s.push(this_str + ' = ' + equals + deviation);
+           s.push(this_str + ' = ' + equals);
         }
       }
     }
@@ -220,8 +220,11 @@ function solve_numbers(numbers, target, show_all) {
     if (!show_all) {
       s = [ s[s.length - 1] ];
     }
-    s.push("Calculations = " + calculations + " Result pool = " + allresults.length+ " Results = " + no_of_same_res );
-    return s.join("\n");
+     s.push('');
+     var conclusion = "Calculations: " + calculations + ". Results: " + no_of_same_res;
+     if (abs_diff)
+         conclusion = "Calculations: " + calculations + ". Results: None. Found " + no_of_same_res + " equations, off by " + abs_diff;
+    return s.join(deviation + "\n") + conclusion;
 }
 
 if (use_console) {
