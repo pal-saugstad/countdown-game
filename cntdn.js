@@ -81,36 +81,6 @@ function _recurse_solve_numbers(numbers, searchedi, was_generated, target, level
     }
 }
 
-function tidyup_result(result) {
-    var swappable = {
-        "*": true, "+": true
-    };
-
-    if (result.length < 4)
-        return result;
-
-    for (var i = 2; i < result.length; i++) {
-        var child = result[i];
-
-        child = tidyup_result(child);
-
-        if (child[1] == result[1] && swappable[result[1]]) {
-            result.splice(i--, 1);
-            result = result.concat(child.slice(2));
-        } else {
-            result[i] = child;
-        }
-    }
-
-    if (swappable[result[1]]) {
-        childs = result.slice(2).sort(function(a,b) { return b[0] - a[0]; });
-        for (var i = 2; i < result.length; i++)
-            result[i] = childs[i-2];
-    }
-
-    return result;
-}
-
 function serialise_result(result) {
     var childparts = [];
 
@@ -206,7 +176,7 @@ function solve_numbers(numbers, target, show_all) {
       var got = {};
       var equals = JSON.parse(allresults[0])[0];
       for (const result of allresults) {
-        var this_str = stringify_result2(tidyup_result(JSON.parse(result)));
+        var this_str = stringify_result2(JSON.parse(result));
         if (!got[this_str]) {
            got[this_str] = true;
            s.push(this_str + ' = ' + equals);
