@@ -188,14 +188,14 @@ function solve_numbers(numbers, target, show_all) {
     _solve_numbers(numbers, target);
 
     var s = [];
+    var got = {};
     for (var val of numbers) {
         var new_abs_diff = Math.abs(val - target);
-        if (new_abs_diff <= abs_diff) {
-          if (new_abs_diff < abs_diff)
-             allresults = [];
-          if (new_abs_diff == 0 || allresults.length == 0)
-            s[0] = val + ' = ' + val;
+        if (new_abs_diff == 0) {
+          s.push(val.toString());
+          got[val.toString()] = val + ' = ' + val;
           abs_diff = new_abs_diff;
+          break;
         }
     }
 
@@ -203,13 +203,12 @@ function solve_numbers(numbers, target, show_all) {
     if (abs_diff)
         deviation = ' (off by ' + abs_diff + ')';
     if (allresults.length > 0) {
-      var got = {};
       var equals = JSON.parse(allresults[0])[0];
       for (const result of allresults) {
         var this_str = stringify_result2(tidyup_result(JSON.parse(result)));
         if (!got[this_str]) {
-           got[this_str] = true;
-           s.push(this_str + ' = ' + equals);
+          got[this_str] = stringify_result(serialise_result(JSON.parse(result)));
+          s.push(this_str);
         }
       }
     }
@@ -220,6 +219,13 @@ function solve_numbers(numbers, target, show_all) {
     if (!show_all) {
       s = [ s[s.length - 1] ];
     }
+     tab_length = s[0].length;
+     s.forEach(function (value, i) {
+         len = tab_length - s[i].length;
+         var space = '';
+         for (j = 0; j < len; j++) space += ' ';
+         s[i] = value + space + '   since: '+ got[value];
+     });
      s.push('');
      var conclusion = "Calculations: " + calculations + ". Results: " + no_of_same_res;
      if (abs_diff)
