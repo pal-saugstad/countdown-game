@@ -180,7 +180,7 @@ function _solve_numbers(numbers, target) {
 
 }
 
-function solve_numbers(numbers, target, show_all, format) {
+function solve_numbers(numbers, target, show_all) {
 
     abs_diff = Math.abs(numbers[0] - target) + 1;
 
@@ -205,39 +205,28 @@ function solve_numbers(numbers, target, show_all, format) {
     if (allresults.length > 0) {
       var got = {};
       var equals = JSON.parse(allresults[0])[0];
-       if (format) {
-         for (const result of allresults) {
-           var this_str = stringify_result2(tidyup_result(JSON.parse(result)));
-           if (!got[this_str]) {
-               got[this_str] = true;
-               s.push(this_str + ' = ' + equals + deviation);
-           }
-         }
-       } else {
-         for (const result of allresults) {
-           var this_str = stringify_result(serialise_result(tidyup_result(JSON.parse(result))));
-           if (!got[this_str]) {
-               got[this_str] = true;
-               s.push(this_str + deviation);
-           }
-         }
-       }
+      for (const result of allresults) {
+        var this_str = stringify_result2(tidyup_result(JSON.parse(result)));
+        if (!got[this_str]) {
+           got[this_str] = true;
+           s.push(this_str + ' = ' + equals + deviation);
+        }
+      }
     }
-     s.sort(function(a,b) {
-          return b.length - a.length;
-     });
-     no_of_same_res = s.length;
-     if (!show_all) {
-       s = [ s[s.length - 1] ];
-     }
-     s.push("Calculations = " + calculations + " Result pool = " + allresults.length+ " Results = " + no_of_same_res );
+    s.sort(function(a,b) {
+      return b.length - a.length;
+    });
+    no_of_same_res = s.length;
+    if (!show_all) {
+      s = [ s[s.length - 1] ];
+    }
+    s.push("Calculations = " + calculations + " Result pool = " + allresults.length+ " Results = " + no_of_same_res );
     return s.join("\n");
 }
 
 if (use_console) {
-  input = [0,0,'-h',1,1,1,1,1,1,0,0];
+  input = [0,0,'-h',1,1,1,1,1,1,0];
   for (n in process.argv) input[n] = parseInt(process.argv[n]);
-  var format = input.pop();
   var show_all = input.pop();
   var target = input.pop();
   input.shift();
@@ -275,10 +264,9 @@ if (use_console) {
     console.log("First six parameters: Input values");
     console.log("Seventh parameter:    Target value");
     console.log("Eight parameter:      If 0 or absent: Show best solution, if 1: Show all solutions");
-    console.log("Ninth parameter:      If 0 or absent: Use small equations with intermediate results, if 1: Use parenteses");
 
   } else {
-    console.log('Input', input, ', Target:', target, ', Show:', show_all == 1 ? 'All results' : 'Best result', ", Format:", format == 1 ? 'Parentesis' : 'Intermediate results' );
-    console.log(solve_numbers(input, target, show_all == 1, format == 1));
+    console.log('Input', input, ', Target:', target, ', Show:', show_all == 1 ? 'All results' : 'Best result' );
+    console.log(solve_numbers(input, target, show_all == 1));
   }
 }
