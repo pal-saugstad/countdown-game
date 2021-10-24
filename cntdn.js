@@ -123,17 +123,23 @@ function stringify_result(serialised) {
     return output.join(' | ');
 }
 
-function stringify_result2(result) {
+function stringify_result2(result, outer_op='+') {
 
     var parts = [];
     for (var i = 2; i < result.length; i++) {
         var child = result[i];
+        var send_op = result[1];
         if (child.length == 1)
-              parts.push(child[0]);
-        else
-             parts.push('(' + stringify_result2(child) + ')');
+            parts.push(child[0]);
+        else {
+            if ((i == 2) && send_op == '-') send_op = '+';
+            parts.push(stringify_result2(child, send_op));
+        }
     }
 
+    if (outer_op != '+' && result[1] != '*') {
+        return '(' + parts.join(' ' + result[1] + ' ') + ')';
+    }
     return parts.join(' ' + result[1] + ' ');
 }
 
@@ -189,17 +195,17 @@ function solve_numbers(numbers, target, show_all) {
     if (!show_all) {
       s = [ s[s.length - 1] ];
     }
-     tab_length = s[0].length;
-     s.forEach(function (value, i) {
-         len = tab_length - s[i].length;
-         var space = '';
-         for (j = 0; j < len; j++) space += ' ';
-         s[i] = value + space + '   since: '+ got[value];
-     });
-     s.push('');
-     var conclusion = "Calculations: " + calculations + ". Results: " + no_of_same_res;
-     if (abs_diff)
-         conclusion = "Calculations: " + calculations + ". Results: None. Found " + no_of_same_res + " equations, off by " + abs_diff;
+    tab_length = s[0].length;
+    s.forEach(function (value, i) {
+       len = tab_length - s[i].length;
+       var space = '';
+       for (j = 0; j < len; j++) space += ' ';
+       s[i] = value + space + '   since: '+ got[value];
+    });
+    s.push('');
+    var conclusion = "Calculations: " + calculations + ". Results: " + no_of_same_res;
+    if (abs_diff)
+       conclusion = "Calculations: " + calculations + ". Results: None. Found " + no_of_same_res + " equations, off by " + abs_diff;
     return s.join(deviation + "\n") + conclusion;
 }
 
