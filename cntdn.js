@@ -229,7 +229,7 @@ function solve_numbers(numbers, target, show_all) {
 
 if (use_console) {
   input = [0,0,'-h',1,1,1,1,1,1,0];
-  for (n in process.argv) input[n] = parseInt(process.argv[n]);
+  for (n in process.argv) if (n < 10) input[n] = parseInt(process.argv[n]);
   var show_all = input.pop();
   var target = input.pop();
   input.shift();
