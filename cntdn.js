@@ -153,17 +153,23 @@ function stringify_result(serialised) {
     return output.join(' | ');
 }
 
-function stringify_result2(result) {
+function stringify_result2(result, outer_op='+') {
 
     var parts = [];
     for (var i = 2; i < result.length; i++) {
         var child = result[i];
+        var send_op = result[1];
         if (child.length == 1)
               parts.push(child[0]);
-        else
-             parts.push('(' + stringify_result2(child) + ')');
+        else {
+            if ((i == 2) && send_op == '-') send_op = '+';
+            parts.push(stringify_result2(child, send_op));
+        }
     }
 
+    if (outer_op != '+' && result[1] != '*') {
+        return '(' + parts.join(' ' + result[1] + ' ') + ')';
+    }
     return parts.join(' ' + result[1] + ' ');
 }
 
