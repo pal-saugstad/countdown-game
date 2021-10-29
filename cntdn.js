@@ -205,9 +205,10 @@ function solve_numbers(numbers, target, show_all) {
     if (allresults.length > 0) {
       var equals = JSON.parse(allresults[0])[0];
       for (const result of allresults) {
-        var this_str = stringify_result2(tidyup_result(JSON.parse(result)));
+        var tidied_result = tidyup_result(JSON.parse(result));
+        var this_str = stringify_result2(tidied_result);
         if (!got[this_str]) {
-          got[this_str] = stringify_result(serialise_result(JSON.parse(result)));
+          got[this_str] = stringify_result(serialise_result(tidied_result));
           s.push(this_str);
         }
       }
