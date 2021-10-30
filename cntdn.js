@@ -219,14 +219,18 @@ function solve_numbers(numbers, target, show_all) {
         }
       }
     }
+    var smallest_first = use_console == false;
     s.sort(function(a,b) {
+      if (smallest_first) return a.length - b.length
       return b.length - a.length;
     });
     no_of_same_res = s.length;
     if (!show_all) {
-      s = [ s[s.length - 1] ];
+      if (smallest_first) s = [ s[0] ];
+      else s = [ s[s.length - 1] ];
     }
-     tab_length = s[0].length;
+     if (smallest_first) tab_length = s[s.length - 1].length;
+     else tab_length = s[0].length;
      s.forEach(function (value, i) {
          len = tab_length - s[i].length;
          var space = '';
@@ -237,6 +241,7 @@ function solve_numbers(numbers, target, show_all) {
      var conclusion = "Calculations: " + calculations + ". Results: " + no_of_same_res;
      if (abs_diff)
          conclusion = "Calculations: " + calculations + ". Results: None. Found " + no_of_same_res + " equations, off by " + abs_diff;
+    if (smallest_first) return conclusion + '\n' + s.join(deviation + "\n");
     return s.join(deviation + "\n") + conclusion;
 }
 
