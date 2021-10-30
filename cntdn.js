@@ -229,18 +229,27 @@ function solve_numbers(numbers, target, show_all) {
       if (smallest_first) s = [ s[0] ];
       else s = [ s[s.length - 1] ];
     }
-     if (smallest_first) tab_length = s[s.length - 1].length;
-     else tab_length = s[0].length;
-     s.forEach(function (value, i) {
-         len = tab_length - s[i].length;
-         var space = '';
-         for (j = 0; j < len; j++) space += ' ';
-         s[i] = value + space + '   since: '+ got[value];
-     });
+     if (s.length == 1) {
+       value = s[0];
+       s[0] += "\nsince: " + got[value];
+     } else {
+       if (smallest_first) tab_length = s[s.length - 1].length;
+       else tab_length = s[0].length;
+       s.forEach(function (value, i) {
+           len = tab_length - s[i].length;
+           var space = '';
+           for (j = 0; j < len; j++) space += ' ';
+           s[i] = value + space + '   since: '+ got[value];
+       });
+     }
      s.push('');
      var conclusion = "Calculations: " + calculations + ". Results: " + no_of_same_res;
      if (abs_diff)
          conclusion = "Calculations: " + calculations + ". Results: None. Found " + no_of_same_res + " equations, off by " + abs_diff;
+    if (!use_console) {
+      if (deviation.length > 0) return s.join("\n" + deviation + "\n");
+      return s.join("\n");
+    }
     if (smallest_first) return conclusion + '\n' + s.join(deviation + "\n");
     return s.join(deviation + "\n") + conclusion;
 }
