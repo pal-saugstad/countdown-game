@@ -43,7 +43,7 @@ var ncons;
 var vowels, cons;
 var letters;
 var needreset;
-
+var multi_result = false;
 $('#vowel-button').click(function() {
     addletter(true);
 });
@@ -75,6 +75,10 @@ $('#enable-music').change(function() {
         if (clockrunning)
             $('#enable-music').prop('disabled', true);
     }
+});
+
+$('#enable-multi').change(function() {
+    multi_result = $('#enable-multi').prop('checked');
 });
 
 $('#clock-start').click(function() {
@@ -605,7 +609,7 @@ function shownumbersanswer() {
     for (var i = 1; i <= 6; i++)
         numbers.push(parseInt($('#number' + i).html()));
 
-    $('#answer').html(solve_numbers(numbers, target, false));
+    $('#answer').html(solve_numbers(numbers, target, multi_result));
 
     $('#letters-show-answers-button').prop('disabled', true);
     $('#numbers-show-answer-button').prop('disabled', true);
