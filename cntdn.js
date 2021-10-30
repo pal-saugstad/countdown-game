@@ -189,6 +189,7 @@ function _solve_numbers(numbers, target) {
 function solve_numbers(numbers, target, show_all) {
 
     abs_diff = Math.abs(numbers[0] - target) + 1;
+    calculations = 0;
 
     allresults = [];
     _solve_numbers(numbers, target);
@@ -243,15 +244,16 @@ function solve_numbers(numbers, target, show_all) {
        });
      }
      s.push('');
-     var conclusion = "Calculations: " + calculations + ". Results: " + no_of_same_res;
+     var conclusion = "Results: " + no_of_same_res + ". Calculations: " + calculations + ".";
      if (abs_diff)
-         conclusion = "Calculations: " + calculations + ". Results: None. Found " + no_of_same_res + " equations, off by " + abs_diff;
+         conclusion = "Results: NONE. Calculations: " + calculations + ". Found " + no_of_same_res + " equations, off by " + abs_diff;
     if (!use_console) {
-      if (deviation.length > 0) return s.join("\n" + deviation + "\n");
-      return s.join("\n");
+      var cconcl = '';
+      if (s.length > 2 || abs_diff > 0) cconcl = conclusion + "\n";
+      return cconcl + s.join("\n");
     }
-    if (smallest_first) return conclusion + '\n' + s.join(deviation + "\n");
-    return s.join(deviation + "\n") + conclusion;
+    if (smallest_first) return conclusion + '\n' + s.join("\n");
+    return s.join("\n") + conclusion;
 }
 
 if (use_console) {
@@ -296,7 +298,9 @@ if (use_console) {
     console.log("Eight parameter:      If 0 or absent: Show best solution, if 1: Show all solutions");
 
   } else {
-    console.log('Input', input, ', Target:', target, ', Show:', show_all == 1 ? 'All results' : 'Best result' );
+    console.log('');
     console.log(solve_numbers(input, target, show_all == 1));
+    console.log('Input:', input, ', Target:', [target], ', Show:', [show_all == 1 ? 'All results' : 'Best result' ]);
+    console.log('');
   }
 }
