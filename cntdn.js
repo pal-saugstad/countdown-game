@@ -220,40 +220,46 @@ function solve_numbers(numbers, target, show_all) {
         }
       }
     }
-    var smallest_first = use_console == false;
-    s.sort(function(a,b) {
-      if (smallest_first) return a.length - b.length
-      return b.length - a.length;
-    });
     no_of_same_res = s.length;
-    if (!show_all) {
-      if (smallest_first) s = [ s[0] ];
-      else s = [ s[s.length - 1] ];
+    if (use_console) {
+      s.sort(function(a,b) {
+        return b.length - a.length
+      });
+      if (!show_all) s = [ s[s.length - 1] ];
+      tab_length = s[0].length;
+      s.forEach(function (value, i) {
+         len = tab_length - s[i].length;
+         var space = '';
+         for (j = 0; j < len; j++) space += ' ';
+         s[i] = value + space + '   since: '+ got[value];
+      });
+      var conclusion = "\nResults: " + no_of_same_res + ". Calculations: " + calculations + ".";
+      if (abs_diff)
+         conclusion = "\nResults: NONE. Calculations: " + calculations + ". Found " + no_of_same_res + " equations, off by " + abs_diff;
+      return s.join("\n") + conclusion;
+    } else {
+      s.sort(function(a,b) {
+        return a.length - b.length;
+      });
+      tab_length = s[s.length - 1].length;
+      var val = s[0];
+      var res_best = val + "\nsince: " + got[val];
+      s.forEach(function (value, i) {
+         len = tab_length - s[i].length;
+         var space = '';
+         for (j = 0; j < len; j++) space += ' ';
+         s[i] = value + space + '   since: '+ got[value];
+      });
+      var ret_val = '';
+      if (abs_diff)
+        ret_val = "<div>Results: NONE. Off by " + abs_diff + '</div>' +
+                  '<div class="res_stats">Found ' + no_of_same_res + ' equations</div>';
+      else
+        ret_val = '<div class="res_stats">Results: ' + no_of_same_res + '</div>';
+      ret_val +=  '<div class="res_best">' + res_best + '</div>' +
+                  '<div class="res_all">' + s.join("\n") + '</div>';
+      return ret_val;
     }
-     if (s.length == 1) {
-       value = s[0];
-       s[0] += "\nsince: " + got[value];
-     } else {
-       if (smallest_first) tab_length = s[s.length - 1].length;
-       else tab_length = s[0].length;
-       s.forEach(function (value, i) {
-           len = tab_length - s[i].length;
-           var space = '';
-           for (j = 0; j < len; j++) space += ' ';
-           s[i] = value + space + '   since: '+ got[value];
-       });
-     }
-     s.push('');
-     var conclusion = "Results: " + no_of_same_res + ". Calculations: " + calculations + ".";
-     if (abs_diff)
-         conclusion = "Results: NONE. Calculations: " + calculations + ". Found " + no_of_same_res + " equations, off by " + abs_diff;
-    if (!use_console) {
-      var cconcl = '';
-      if (s.length > 2 || abs_diff > 0) cconcl = conclusion + "\n";
-      return cconcl + s.join("\n");
-    }
-    if (smallest_first) return conclusion + '\n' + s.join("\n");
-    return s.join("\n") + conclusion;
 }
 
 if (use_console) {

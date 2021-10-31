@@ -43,7 +43,7 @@ var ncons;
 var vowels, cons;
 var letters;
 var needreset;
-var multi_result = false;
+var best_result = true;
 $('#vowel-button').click(function() {
     addletter(true);
 });
@@ -77,8 +77,29 @@ $('#enable-music').change(function() {
     }
 });
 
-$('#enable-multi').change(function() {
-    multi_result = $('#enable-multi').prop('checked');
+function check_best_result() {
+  best_result = $('#best-result').prop('checked');
+  stats_result = $('#stats-result').prop('checked');
+  if (best_result) {
+    $('.res_best').show();
+    $('.res_all').hide();
+  } else {
+    $('.res_best').hide();
+    $('.res_all').show();
+  }
+  if (stats_result) {
+    $('.res_stats').show();
+  } else {
+    $('.res_stats').hide();
+  }
+}
+
+$('#best-result').change(function() {
+  check_best_result();
+});
+
+$('#stats-result').change(function() {
+  check_best_result();
 });
 
 $('#clock-start').click(function() {
@@ -609,7 +630,8 @@ function shownumbersanswer() {
     for (var i = 1; i <= 6; i++)
         numbers.push(parseInt($('#number' + i).html()));
 
-    $('#answer').html(solve_numbers(numbers, target, multi_result));
+    $('#answer').html(solve_numbers(numbers, target, false));
+    check_best_result();
 
     $('#letters-show-answers-button').prop('disabled', true);
     $('#numbers-show-answer-button').prop('disabled', true);
