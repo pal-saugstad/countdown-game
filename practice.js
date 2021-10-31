@@ -632,12 +632,39 @@ function showlettersanswer() {
 
     solve_letters(letters.toLowerCase(), function(word, c) { result.push([word, c]); });
 
-    result.sort(function(a, b) {
-        if (b[0].length != a[0].length)
-            return b[0].length - a[0].length;
-        else
-            return b[1] - a[1];
-    });
+    var out_matrix = [[],[],[],[],[],[],[],[],[],[]];
+
+    for (value of result) {
+      out_matrix[value[0].length].push(value[0]);
+    }
+//    $('#answer').html(JSON.stringify(result) + "\n" + JSON.stringify(out_matrix));
+
+    for (i in out_matrix) {
+      out_matrix[i].sort(function(a, b) {
+          return a > b;
+      });
+    }
+//    $('#answer').html(JSON.stringify(out_matrix));
+
+    var spaces = ['', ' ', '  ', '   ', '    ', '     ', '      ', '       ', '        ', '         '];
+    var res = ['1    2    3      4      5        6        7          8          9'];
+    still_data = true;
+    max_j = 9;
+    for (i = 0; max_j > 0; i++) {
+      var row = '';
+      some_j = 0;
+      for (j = 1; j <= max_j; j++) {
+        word = spaces[j];
+        if (out_matrix[j].length > i) {
+          word = out_matrix[j][i];
+          some_j = j;
+        }
+        row += word + '   ';
+      }
+      max_j = some_j;
+      res.push(row);
+      $('#answer').html(row);
+    }
 
     if (is_conundrum) {
         r = [];
@@ -645,14 +672,15 @@ function showlettersanswer() {
             if (result[i][0].length == 9)
                 r.push(result[i]);
         result = r;
-    }
+        $('#answer').html(result.map(function(a) { return a[0]; }).join("\n"));
+    } else {
 
     var extralines = '';
     for (var i = result.length; i < 10; i++)
         extralines += "\n";
 
-    $('#answer').html(result.map(function(a) { return a[0]; }).join("\n"));
-
+    $('#answer').html(res.join("\n"));
+    }
     var best = result.length ? result[0][0].toUpperCase() : '';
     if (best.length == 9) {
         best += '         ';
