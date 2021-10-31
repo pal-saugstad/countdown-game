@@ -117,10 +117,9 @@ $('#seed-result').change(function() {
 $('#seed').change(function() {
   var istring = $('#seed').val();
   var inputs = istring.split(' ');
-  var alt_inputs = gennumbers(0, false);
   if (inputs.length == 7) {
     for (i in inputs) {
-      if (isNaN(inputs[i])) inputs[i] = alt_inputs[i];
+      if (isNaN(inputs[i])) inputs[i] = '0';
     }
     var targ = inputs.pop();
     defined_numbers(inputs, targ);
@@ -214,7 +213,7 @@ function defined_numbers(inputs, targ) {
     addnumber();
 }
 
-function gennumbers(large, add=true) {
+function gennumbers(large) {
     reset();
 
     var largenums = [25, 50, 75, 100];
@@ -223,25 +222,18 @@ function gennumbers(large, add=true) {
     shuffle(largenums);
     shuffle(smallnums);
 
-    var loc_numbers = [];
+    numbers = [];
 
     for (var i = 1; i <= large; i++)
-        loc_numbers.push(largenums[i-1]);
+        numbers.push(largenums[i-1]);
 
     for (var i = large+1; i <= 6; i++)
-        loc_numbers.push(smallnums[i-(large+1)]);
+        numbers.push(smallnums[i-(large+1)]);
 
-    var loc_target = Math.floor(Math.random() * (899)) + 101;
+    target = Math.floor(Math.random() * (899)) + 101;
 
-    if (add) {
-      numbersteps = 30;
-      numbers = loc_numbers;
-      target = loc_target;
-      addnumber();
-    } else {
-      loc_numbers.push(loc_target);
-      return loc_numbers;
-    }
+    numbersteps = 30;
+    addnumber();
 }
 
 function addnumber() {
