@@ -260,6 +260,7 @@ function gentarget() {
 function letters_switch() {
     $('#letters-switch').removeClass('btn-light').addClass('btn-primary');
     $('#numbers-switch').removeClass('btn-primary').addClass('btn-light');
+    $('#number-switches').hide();
     $('#letters-game,#letter-buttons').css('display', 'block');
     $('#numbers-game,#number-buttons').css('display', 'none');
     if (window.location.hash)
@@ -272,6 +273,7 @@ function letters_switch() {
 function numbers_switch() {
     $('#numbers-switch').removeClass('btn-light').addClass('btn-primary');
     $('#letters-switch').removeClass('btn-primary').addClass('btn-light');
+    $('#number-switches').show();
     $('#numbers-game,#number-buttons').css('display', 'block');
     $('#letters-game,#letter-buttons').css('display', 'none');
     window.location.hash = 'numbers';
@@ -674,12 +676,7 @@ function showlettersanswer() {
         result = r;
         $('#answer').html(result.map(function(a) { return a[0]; }).join("\n"));
     } else {
-
-    var extralines = '';
-    for (var i = result.length; i < 10; i++)
-        extralines += "\n";
-
-    $('#answer').html(res.join("\n"));
+        $('#answer').html(res.join("\n"));
     }
     var best = result.length ? result[0][0].toUpperCase() : '';
     if (best.length == 9) {
