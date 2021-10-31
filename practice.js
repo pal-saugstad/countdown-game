@@ -65,7 +65,7 @@ $('#4large').click(function() { gennumbers(4); });
 $('#random-large').click(function() {
     gennumbers(Math.floor(Math.random() * 5));
 });
-$('#numbers-reset-button').click(reset);
+$('#numbers-reset-button').click(function() { reset(true); });
 
 $('#conundrum-clue').click(show_conundrum_clue);
 
@@ -78,8 +78,8 @@ $('#enable-music').change(function() {
 });
 
 function check_best_result() {
-  best_result = $('#best-result').prop('checked');
-  stats_result = $('#stats-result').prop('checked');
+  var best_result = $('#best-result').prop('checked');
+  var stats_result = $('#stats-result').prop('checked');
   if (best_result) {
     $('.res_best').show();
     $('.res_all').hide();
@@ -97,6 +97,40 @@ function check_best_result() {
 $('#best-result').change(function() {
   check_best_result();
 });
+
+function check_seed() {
+  var seed_result = $('#seed-result').prop('checked');
+  $('#seed').val('');
+  if (seed_result) {
+    $('#generate-buttons').hide();
+    $('#seed-div').show();
+  } else {
+    $('#generate-buttons').show();
+    $('#seed-div').hide();
+  }
+}
+
+$('#seed-result').change(function() {
+  check_seed();
+});
+
+$('#seed').change(function() {
+  var istring = $('#seed').val();
+  var inputs = istring.split(' ');
+  var alt_inputs = gennumbers(0, false);
+  if (inputs.length == 7) {
+    for (i in inputs) {
+      if (isNaN(inputs[i])) inputs[i] = alt_inputs[i];
+    }
+    var targ = inputs.pop();
+    defined_numbers(inputs, targ);
+  } else {
+    $('#answer').text("Wrong input format - '" + istring + "'" +
+                     "\nFormat: 7 numbers where the latter is the target" +
+                     "\nExample: '25 75 7 11 13 3 563'");
+  }
+});
+
 
 $('#stats-result').change(function() {
   check_best_result();
@@ -152,10 +186,12 @@ else
 $('input[name="clocktime"]').change(retime);
 retime();
 
-if (window.location.hash == '#numbers')
-    numbers_switch();
-else
-    letters_switch();
+if (window.location.hash == '#numbers') {
+  numbers_switch();
+  check_seed();
+} else {
+  letters_switch();
+}
 
 function clocktotal() {
     return parseInt($('input[name="clocktime"]:checked').val());
@@ -170,7 +206,15 @@ function retime() {
     renderclock();
 }
 
-function gennumbers(large) {
+function defined_numbers(inputs, targ) {
+    reset();
+    numbers = inputs;
+    target = targ;
+    numbersteps = 30;
+    addnumber();
+}
+
+function gennumbers(large, add=true) {
     reset();
 
     var largenums = [25, 50, 75, 100];
@@ -179,18 +223,25 @@ function gennumbers(large) {
     shuffle(largenums);
     shuffle(smallnums);
 
-    numbers = [];
+    var loc_numbers = [];
 
     for (var i = 1; i <= large; i++)
-        numbers.push(largenums[i-1]);
+        loc_numbers.push(largenums[i-1]);
 
     for (var i = large+1; i <= 6; i++)
-        numbers.push(smallnums[i-(large+1)]);
+        loc_numbers.push(smallnums[i-(large+1)]);
 
-    target = Math.floor(Math.random() * (899)) + 101;
+    var loc_target = Math.floor(Math.random() * (899)) + 101;
 
-    numbersteps = 30;
-    addnumber();
+    if (add) {
+      numbersteps = 30;
+      numbers = loc_numbers;
+      target = loc_target;
+      addnumber();
+    } else {
+      loc_numbers.push(loc_target);
+      return loc_numbers;
+    }
 }
 
 function addnumber() {
@@ -531,7 +582,7 @@ function renderclock() {
     ctx.stroke();
 }
 
-function reset() {
+function reset(full_reset=false) {
     clearTimeout(numbertimeout);
 
     needreset = false;
@@ -578,6 +629,7 @@ function reset() {
     $('#letters-show-answers-button').removeClass('btn-warning');
     $('#numbers-show-answer-button').addClass('btn-success');
     $('#numbers-show-answer-button').removeClass('btn-warning');
+    if (full_reset) $('#seed').val('');
 }
 
 function showlettersanswer() {

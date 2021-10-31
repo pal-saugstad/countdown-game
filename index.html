@@ -104,7 +104,11 @@
                         <div id="check-word-output"></div>
                     </div>
                     <div id="number-buttons" class="col-sm">
-                        <div class="btn-group">
+                      <div id="seed-div" style="height: 49px">
+                        <input id="seed" style="width: 85%" placeholder="Define the inputs and target here"></textarea>
+                      </div>
+
+                        <div class="btn-group" id="generate-buttons">
                             <button class="btn btn-light" id="0large">0 large</button>
                             <button class="btn btn-light" id="1large">1 large</button>
                             <button class="btn btn-light" id="2large">2 large</button>
@@ -137,6 +141,14 @@
                         </div>
                     </div>
                     <div class="row">
+                      <div class="col-sm">
+                          <div class="form-group">
+                              <div class="form-check">
+                                  <input type="checkbox" id="seed-result" class="form-check-input" />
+                                  <label class="form-check-label" for="seed-result">Define input</label>
+                              </div>
+                          </div>
+                      </div>
                       <div class="col-sm">
                           <div class="form-group">
                               <div class="form-check">
