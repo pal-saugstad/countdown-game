@@ -98,9 +98,9 @@ $('#best-result').change(function() {
   check_best_result();
 });
 
-function check_seed() {
+function check_seed(full_reset=true) {
   var seed_result = $('#seed-result').prop('checked');
-  $('#seed').val('');
+  if (full_reset) $('#seed').val('');
   if (seed_result) {
     $('#generate-buttons').hide();
     $('#seed-div').show();
@@ -623,7 +623,7 @@ function reset(full_reset=false) {
     $('#letters-show-answers-button').removeClass('btn-warning');
     $('#numbers-show-answer-button').addClass('btn-success');
     $('#numbers-show-answer-button').removeClass('btn-warning');
-    if (full_reset) $('#seed').val('');
+    check_seed(full_reset);
 }
 
 function showlettersanswer() {
