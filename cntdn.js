@@ -218,35 +218,26 @@ function solve_numbers(numbers, target, show_all) {
       }
     }
     no_of_same_res = s.length;
+    s.sort(function(a,b) {
+      return a.length - b.length;
+    });
+    var val = s[0];
+    tab_length = s[s.length - 1].length;
+    s.forEach(function (value, i) {
+       len = tab_length - s[i].length;
+       var space = '';
+       for (j = 0; j < len; j++) space += ' ';
+       s[i] = value + space + '   since: '+ got[value];
+    });
+    var divider = use_console ? "   " : "\n";
+    var res_best = val + divider + "since: " + got[val];
     if (use_console) {
-      s.sort(function(a,b) {
-        return b.length - a.length
-      });
-      if (!show_all) s = [ s[s.length - 1] ];
-      tab_length = s[0].length;
-      s.forEach(function (value, i) {
-         len = tab_length - s[i].length;
-         var space = '';
-         for (j = 0; j < len; j++) space += ' ';
-         s[i] = value + space + '   since: '+ got[value];
-      });
+      if (!show_all) s = [ res_best ];
       var conclusion = "\nResults: " + no_of_same_res + ". Calculations: " + calculations + ".";
       if (abs_diff)
          conclusion = "\nResults: NONE. Calculations: " + calculations + ". Found " + no_of_same_res + " equations, off by " + abs_diff;
-      return s.join("\n") + conclusion;
+      return s.reverse().join("\n") + conclusion;
     } else {
-      s.sort(function(a,b) {
-        return a.length - b.length;
-      });
-      tab_length = s[s.length - 1].length;
-      var val = s[0];
-      var res_best = val + "\nsince: " + got[val];
-      s.forEach(function (value, i) {
-         len = tab_length - s[i].length;
-         var space = '';
-         for (j = 0; j < len; j++) space += ' ';
-         s[i] = value + space + '   since: '+ got[value];
-      });
       var ret_val = '';
       if (abs_diff)
         ret_val = "<div>Results: NONE. Off by " + abs_diff + '</div>' +
