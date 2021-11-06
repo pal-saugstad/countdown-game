@@ -189,6 +189,7 @@ function _solve_numbers(numbers, target) {
 function solve_numbers(numbers, target, show_all) {
 
     abs_diff = Math.abs(numbers[0] - target) + 1;
+    calculations = 0;
 
     allresults = [];
     _solve_numbers(numbers, target);
@@ -219,25 +220,46 @@ function solve_numbers(numbers, target, show_all) {
         }
       }
     }
-    s.sort(function(a,b) {
-      return b.length - a.length;
-    });
     no_of_same_res = s.length;
-    if (!show_all) {
-      s = [ s[s.length - 1] ];
-    }
-     tab_length = s[0].length;
-     s.forEach(function (value, i) {
+    if (use_console) {
+      s.sort(function(a,b) {
+        return b.length - a.length
+      });
+      if (!show_all) s = [ s[s.length - 1] ];
+      tab_length = s[0].length;
+      s.forEach(function (value, i) {
          len = tab_length - s[i].length;
          var space = '';
          for (j = 0; j < len; j++) space += ' ';
          s[i] = value + space + '   since: '+ got[value];
-     });
-     s.push('');
-     var conclusion = "Calculations: " + calculations + ". Results: " + no_of_same_res;
-     if (abs_diff)
-         conclusion = "Calculations: " + calculations + ". Results: None. Found " + no_of_same_res + " equations, off by " + abs_diff;
-    return s.join(deviation + "\n") + conclusion;
+      });
+      var conclusion = "\nResults: " + no_of_same_res + ". Calculations: " + calculations + ".";
+      if (abs_diff)
+         conclusion = "\nResults: NONE. Calculations: " + calculations + ". Found " + no_of_same_res + " equations, off by " + abs_diff;
+      return s.join("\n") + conclusion;
+    } else {
+      s.sort(function(a,b) {
+        return a.length - b.length;
+      });
+      tab_length = s[s.length - 1].length;
+      var val = s[0];
+      var res_best = val + "\nsince: " + got[val];
+      s.forEach(function (value, i) {
+         len = tab_length - s[i].length;
+         var space = '';
+         for (j = 0; j < len; j++) space += ' ';
+         s[i] = value + space + '   since: '+ got[value];
+      });
+      var ret_val = '';
+      if (abs_diff)
+        ret_val = "<div>Results: NONE. Off by " + abs_diff + '</div>' +
+                  '<div class="res_stats">Found ' + no_of_same_res + ' equations</div>';
+      else
+        ret_val = '<div class="res_stats">Results: ' + no_of_same_res + '</div>';
+      ret_val +=  '<div class="res_best">' + res_best + '</div>' +
+                  '<div class="res_all">' + s.join("\n") + '</div>';
+      return ret_val;
+    }
 }
 
 if (use_console) {
@@ -282,7 +304,9 @@ if (use_console) {
     console.log("Eight parameter:      If 0 or absent: Show best solution, if 1: Show all solutions");
 
   } else {
-    console.log('Input', input, ', Target:', target, ', Show:', show_all == 1 ? 'All results' : 'Best result' );
+    console.log('');
     console.log(solve_numbers(input, target, show_all == 1));
+    console.log('Input:', input, ', Target:', [target], ', Show:', [show_all == 1 ? 'All results' : 'Best result' ]);
+    console.log('');
   }
 }

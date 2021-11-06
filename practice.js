@@ -43,7 +43,7 @@ var ncons;
 var vowels, cons;
 var letters;
 var needreset;
-
+var best_result = true;
 $('#vowel-button').click(function() {
     addletter(true);
 });
@@ -65,7 +65,7 @@ $('#4large').click(function() { gennumbers(4); });
 $('#random-large').click(function() {
     gennumbers(Math.floor(Math.random() * 5));
 });
-$('#numbers-reset-button').click(reset);
+$('#numbers-reset-button').click(function() { reset(true); });
 
 $('#conundrum-clue').click(show_conundrum_clue);
 
@@ -75,6 +75,64 @@ $('#enable-music').change(function() {
         if (clockrunning)
             $('#enable-music').prop('disabled', true);
     }
+});
+
+function check_best_result() {
+  var best_result = $('#best-result').prop('checked');
+  var stats_result = $('#stats-result').prop('checked');
+  if (best_result) {
+    $('.res_best').show();
+    $('.res_all').hide();
+  } else {
+    $('.res_best').hide();
+    $('.res_all').show();
+  }
+  if (stats_result) {
+    $('.res_stats').show();
+  } else {
+    $('.res_stats').hide();
+  }
+}
+
+$('#best-result').change(function() {
+  check_best_result();
+});
+
+function check_seed(full_reset=true) {
+  var seed_result = $('#seed-result').prop('checked');
+  if (full_reset) $('#seed').val('');
+  if (seed_result) {
+    $('#generate-buttons').hide();
+    $('#seed-div').show();
+  } else {
+    $('#generate-buttons').show();
+    $('#seed-div').hide();
+  }
+}
+
+$('#seed-result').change(function() {
+  check_seed();
+});
+
+$('#seed').change(function() {
+  var istring = $('#seed').val();
+  var inputs = istring.split(' ');
+  if (inputs.length == 7) {
+    for (i in inputs) {
+      if (isNaN(inputs[i])) inputs[i] = '0';
+    }
+    var targ = inputs.pop();
+    defined_numbers(inputs, targ);
+  } else {
+    $('#answer').text("Wrong input format - '" + istring + "'" +
+                     "\nFormat: 7 numbers where the latter is the target" +
+                     "\nExample: '25 75 7 11 13 3 563'");
+  }
+});
+
+
+$('#stats-result').change(function() {
+  check_best_result();
 });
 
 $('#clock-start').click(function() {
@@ -127,10 +185,12 @@ else
 $('input[name="clocktime"]').change(retime);
 retime();
 
-if (window.location.hash == '#numbers')
-    numbers_switch();
-else
-    letters_switch();
+if (window.location.hash == '#numbers') {
+  numbers_switch();
+  check_seed();
+} else {
+  letters_switch();
+}
 
 function clocktotal() {
     return parseInt($('input[name="clocktime"]:checked').val());
@@ -143,6 +203,14 @@ function retime() {
     $('#music')[0].load();
     $('#music')[0].pause();
     renderclock();
+}
+
+function defined_numbers(inputs, targ) {
+    reset();
+    numbers = inputs;
+    target = targ;
+    numbersteps = 30;
+    addnumber();
 }
 
 function gennumbers(large) {
@@ -192,6 +260,7 @@ function gentarget() {
 function letters_switch() {
     $('#letters-switch').removeClass('btn-light').addClass('btn-primary');
     $('#numbers-switch').removeClass('btn-primary').addClass('btn-light');
+    $('#number-switches').hide();
     $('#letters-game,#letter-buttons').css('display', 'block');
     $('#numbers-game,#number-buttons').css('display', 'none');
     if (window.location.hash)
@@ -204,6 +273,7 @@ function letters_switch() {
 function numbers_switch() {
     $('#numbers-switch').removeClass('btn-light').addClass('btn-primary');
     $('#letters-switch').removeClass('btn-primary').addClass('btn-light');
+    $('#number-switches').show();
     $('#numbers-game,#number-buttons').css('display', 'block');
     $('#letters-game,#letter-buttons').css('display', 'none');
     window.location.hash = 'numbers';
@@ -506,7 +576,7 @@ function renderclock() {
     ctx.stroke();
 }
 
-function reset() {
+function reset(full_reset=false) {
     clearTimeout(numbertimeout);
 
     needreset = false;
@@ -553,6 +623,7 @@ function reset() {
     $('#letters-show-answers-button').removeClass('btn-warning');
     $('#numbers-show-answer-button').addClass('btn-success');
     $('#numbers-show-answer-button').removeClass('btn-warning');
+    check_seed(full_reset);
 }
 
 function showlettersanswer() {
@@ -564,11 +635,32 @@ function showlettersanswer() {
     solve_letters(letters.toLowerCase(), function(word, c) { result.push([word, c]); });
 
     result.sort(function(a, b) {
-        if (b[0].length != a[0].length)
-            return b[0].length - a[0].length;
-        else
-            return b[1] - a[1];
+      return a > b;
     });
+
+    var out_matrix = [[],[],[],[],[],[],[],[],[],[]];
+
+    for (value of result) {
+      out_matrix[value[0].length].push(value[0]);
+    }
+
+    var spaces = '                                                                        ';
+    var res = ['1    2    3      4      5        6        7          8          9'];
+    var row = 'init';
+    for (i = 0; row.length > 0; i++) {
+      row = '';
+      var blanks = 0;
+      for (j = 1; j <= 9; j++) {
+        if (out_matrix[j].length > i) {
+          row += spaces.substring(0,blanks) + out_matrix[j][i];
+          blanks = 3;
+        } else {
+          blanks += j + 3;
+        }
+      }
+      res.push(row);
+      $('#answer').html(row);
+    }
 
     if (is_conundrum) {
         r = [];
@@ -576,14 +668,10 @@ function showlettersanswer() {
             if (result[i][0].length == 9)
                 r.push(result[i]);
         result = r;
+        $('#answer').html(result.map(function(a) { return a[0]; }).join("\n"));
+    } else {
+        $('#answer').html(res.join("\n"));
     }
-
-    var extralines = '';
-    for (var i = result.length; i < 10; i++)
-        extralines += "\n";
-
-    $('#answer').html(result.map(function(a) { return a[0]; }).join("\n"));
-
     var best = result.length ? result[0][0].toUpperCase() : '';
     if (best.length == 9) {
         best += '         ';
@@ -606,6 +694,7 @@ function shownumbersanswer() {
         numbers.push(parseInt($('#number' + i).html()));
 
     $('#answer').html(solve_numbers(numbers, target, false));
+    check_best_result();
 
     $('#letters-show-answers-button').prop('disabled', true);
     $('#numbers-show-answer-button').prop('disabled', true);

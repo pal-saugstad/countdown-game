@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="bootstrap.min.css">
-    <link rel="stylesheet" href="style.css?v=7">
+    <link rel="stylesheet" href="style.css?v=8">
     <title>Countdown Game</title>
 <body>
     <div id="flash"></div>
@@ -104,7 +104,11 @@
                         <div id="check-word-output"></div>
                     </div>
                     <div id="number-buttons" class="col-sm">
-                        <div class="btn-group">
+                      <div id="seed-div" style="height: 49px">
+                        <input id="seed" style="width: 85%" placeholder="Define the inputs and target here"></textarea>
+                      </div>
+
+                        <div class="btn-group" id="generate-buttons">
                             <button class="btn btn-light" id="0large">0 large</button>
                             <button class="btn btn-light" id="1large">1 large</button>
                             <button class="btn btn-light" id="2large">2 large</button>
@@ -118,6 +122,34 @@
                     </div>
                 </div>
                 <div id="switches">
+                  <div id="number-switches">
+                    <div class="row">
+                      <div class="col-sm">
+                          <div class="form-group">
+                              <div class="form-check">
+                                  <input type="checkbox" id="seed-result" class="form-check-input" />
+                                  <label class="form-check-label" for="seed-result">Define input</label>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="col-sm">
+                          <div class="form-group">
+                              <div class="form-check">
+                                  <input type="checkbox" id="best-result" class="form-check-input" checked />
+                                  <label class="form-check-label" for="best-result">Best result</label>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="col-sm">
+                          <div class="form-group">
+                              <div class="form-check">
+                                  <input type="checkbox" id="stats-result" class="form-check-input" />
+                                  <label class="form-check-label" for="stats-result">Statistics</label>
+                              </div>
+                          </div>
+                      </div>
+                    </div>
+                    </div>
                     <div class="row">
                         <div class="col-sm">
                             <div class="form-group">
@@ -135,6 +167,8 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-sm-12">
                             <div class="form-group">
                                 Clock time:
@@ -159,10 +193,10 @@
                     </div>
                 </div>
                 <button id="conundrum-clue" style="display:none" class="btn btn-primary">Conundrum Clue</button>
-                <div class="answer" id="answer"></div><br><br>
 
            </div>
         </div>
+        <div class="answer" id="answer"></div><br>
 
         <div class="row">
             <div class="col-lg-7">

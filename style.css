@@ -6,7 +6,8 @@ body {
 .answer {
   font-family: monospace;
   white-space: pre;
-  font-size: 2em;
+  text-align: left;
+  font-size: 1.1em;
 }
 
 .tile {
