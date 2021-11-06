@@ -206,9 +206,6 @@ function solve_numbers(numbers, target, show_all) {
         }
     }
 
-    deviation = ''
-    if (abs_diff)
-        deviation = ' (off by ' + abs_diff + ')';
     if (allresults.length > 0) {
       var equals = JSON.parse(allresults[0])[0];
       for (const result of allresults) {
