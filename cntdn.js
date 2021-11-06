@@ -186,6 +186,8 @@ function _solve_numbers(numbers, target) {
 
 }
 
+var spaces = '                                                ';
+
 function solve_numbers(numbers, target, show_all) {
 
     abs_diff = Math.abs(numbers[0] - target) + 1;
@@ -222,12 +224,9 @@ function solve_numbers(numbers, target, show_all) {
       return a.length - b.length;
     });
     var val = s[0];
-    tab_length = s[s.length - 1].length;
+    tab_length = s[s.length - 1].length + 3;
     s.forEach(function (value, i) {
-       len = tab_length - s[i].length;
-       var space = '';
-       for (j = 0; j < len; j++) space += ' ';
-       s[i] = value + space + '   since: '+ got[value];
+       s[i] = value + spaces.substring(0, tab_length - s[i].length) + 'since: '+ got[value];
     });
     var divider = use_console ? "   " : "\n";
     var res_best = val + divider + "since: " + got[val];
