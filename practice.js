@@ -634,36 +634,30 @@ function showlettersanswer() {
 
     solve_letters(letters.toLowerCase(), function(word, c) { result.push([word, c]); });
 
+    result.sort(function(a, b) {
+      return a > b;
+    });
+
     var out_matrix = [[],[],[],[],[],[],[],[],[],[]];
 
     for (value of result) {
       out_matrix[value[0].length].push(value[0]);
     }
-//    $('#answer').html(JSON.stringify(result) + "\n" + JSON.stringify(out_matrix));
 
-    for (i in out_matrix) {
-      out_matrix[i].sort(function(a, b) {
-          return a > b;
-      });
-    }
-//    $('#answer').html(JSON.stringify(out_matrix));
-
-    var spaces = ['', ' ', '  ', '   ', '    ', '     ', '      ', '       ', '        ', '         '];
+    var spaces = '                                                                        ';
     var res = ['1    2    3      4      5        6        7          8          9'];
-    still_data = true;
-    max_j = 9;
-    for (i = 0; max_j > 0; i++) {
-      var row = '';
-      some_j = 0;
-      for (j = 1; j <= max_j; j++) {
-        word = spaces[j];
+    var row = 'init';
+    for (i = 0; row.length > 0; i++) {
+      row = '';
+      var blanks = 0;
+      for (j = 1; j <= 9; j++) {
         if (out_matrix[j].length > i) {
-          word = out_matrix[j][i];
-          some_j = j;
+          row += spaces.substring(0,blanks) + out_matrix[j][i];
+          blanks = 3;
+        } else {
+          blanks += j + 3;
         }
-        row += word + '   ';
       }
-      max_j = some_j;
       res.push(row);
       $('#answer').html(row);
     }
