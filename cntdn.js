@@ -104,16 +104,17 @@ function tidyup_result(result) {
         return result;
 
     for (var i = 2; i < result.length; i++) {
-        var child = result[i];
+      var child = result[i];
 
+      if (child.length > 2) {
         child = tidyup_result(child);
-
         if (child[1] == result[1] && swappable[result[1]]) {
-            result.splice(i--, 1);
-            result = result.concat(child.slice(2));
+          result.splice(i--, 1);
+          result = result.concat(child.slice(2));
         } else {
-            result[i] = child;
+          result[i] = child;
         }
+      }
     }
 
     if (swappable[result[1]]) {
