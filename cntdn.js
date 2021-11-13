@@ -27,12 +27,29 @@ var abs_diff;
 var calculations = 0;
 
 var OPS = [
-    function(n1, n2) { return [n1[0]+n2[0], '+', n2, n1]; },
-    function(n1, n2) { if (n2[0] >= n1[0]) return false; return [n1[0]-n2[0], '-', n1, n2]; },
-    function(n2, n1) { if (n2[0] >= n1[0]) return false; return [n1[0]-n2[0], '-', n1, n2]; },
-    function(n1, n2) { if (n2[0] < 2 || n1[0] < 2) return false; return [n1[0]*n2[0], '*', n2, n1]; },
-    function(n1, n2) { if (n2[0] < 2 || n1[0]%n2[0] != 0) return false; return [n1[0]/n2[0], '/', n1, n2]; },
-    function(n2, n1) { if (n2[0] < 2 || n1[0]%n2[0] != 0) return false; return [n1[0]/n2[0], '/', n1, n2]; },
+    function(n1, n2) {
+      return [n1[0]+n2[0], '+', n2, n1];
+    },
+    function(n1, n2) {
+      if (n2[0] >= n1[0]) return false;
+      return [n1[0]-n2[0], '-', n1, n2];
+    },
+    function(n2, n1) {
+      if (n2[0] >= n1[0]) return false;
+      return [n1[0]-n2[0], '-', n1, n2];
+    },
+    function(n1, n2) {
+      if (n2[0] < 2 || n1[0] < 2) return false;
+      return [n1[0]*n2[0], '*', n2, n1];
+    },
+    function(n1, n2) {
+      if (n2[0] < 2 || n1[0]%n2[0] != 0) return false;
+      return [n1[0]/n2[0], '/', n1, n2];
+    },
+    function(n2, n1) {
+      if (n2[0] < 2 || n1[0]%n2[0] != 0) return false;
+      return [n1[0]/n2[0], '/', n1, n2];
+    }
 ];
 
 function _recurse_solve_numbers(numbers, searchedi, was_generated, target, levels) {
