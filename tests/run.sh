@@ -41,7 +41,11 @@ while read -r cnt codes ; do
 
   while read -r p_js ; do
     [ "$p_js" ] || continue
-    echo -n "->  $p_js "; node ${p_js} $codes
+    echo -n "->  $p_js "
+    node ${p_js} $codes | tee result
+    got=$(cat result | grep -oP 'Results: \K[0-9]*')
+    rm result
+    [ $got -ne $cnt ] && echo "DIFFER got $got, expected $cnt"
   done <<< "$([ -d js ] && find js -type f | grep '_')
 ../cntdn.js"
 done < codes
