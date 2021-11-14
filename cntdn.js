@@ -97,13 +97,11 @@ function _recurse_solve_numbers(numbers, searchedi, was_generated, target, level
     }
 }
 
-function tidyup_result(result) {
+function tidyup_result(result_in) {
     var swappable = {
         "*": true, "+": true
     };
-
-    if (result.length < 4)
-        return result;
+    var result = result_in.slice();
 
     for (var i = 2; i < result.length; i++) {
       var child = result[i];
