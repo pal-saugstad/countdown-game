@@ -35,8 +35,8 @@ var OPS = [
     },
     function(n1, n2) {
       if (n2[0] == n1[0]) return false;
-      if (n1[0] >  n2[0]) return [n1[0]-n2[0], '-', n1, n2];
-      return [n2[0]-n1[0], '-', n2, n1];
+      if (n1[0] >  n2[0]) return [n1[0]-n2[0], '+', n1, n2];
+      return [n2[0]-n1[0], '+', n2, n1];
     },
     function(n1, n2) {
       if (n2[0] < 2 || n1[0] < 2) return false;
@@ -45,8 +45,8 @@ var OPS = [
     },
     function(n1, n2) {
       if (n2[0] < 2 || n1[0] < 2) return false;
-      if (n1[0]%n2[0] == 0) return [n1[0]/n2[0], '/', n1, n2];
-      if (n2[0]%n1[0] == 0) return [n2[0]/n1[0], '/', n2, n1];
+      if (n1[0]%n2[0] == 0) return [n1[0]/n2[0], '*', n1, n2];
+      if (n2[0]%n1[0] == 0) return [n2[0]/n1[0], '*', n2, n1];
       return false;
     }
 ];
@@ -106,9 +106,6 @@ function _recurse_solve_numbers(numbers, searchedi, was_generated, target, level
 }
 
 function tidyup_result(result_in) {
-    var swappable = {
-        "*": true, "+": true
-    };
     var result = result_in.slice();
 
     for (var i = 2; i < result.length; i++) {
@@ -116,7 +113,7 @@ function tidyup_result(result_in) {
 
       if (child.length > 2) {
         child = tidyup_result(child);
-        if (child[1] == result[1] && swappable[result[1]]) {
+        if (child[1] == result[1]) {
           result.splice(i--, 1);
           result = result.concat(child.slice(2));
         } else {
@@ -125,11 +122,9 @@ function tidyup_result(result_in) {
       }
     }
 
-    if (swappable[result[1]]) {
-        var childs = result.slice(2).sort(function(a,b) { return b[0] - a[0]; });
-        for (var i = 2; i < result.length; i++)
-            result[i] = childs[i-2];
-    }
+    var childs = result.slice(2).sort(function(a,b) { return b[0] - a[0]; });
+    for (var i = 2; i < result.length; i++)
+        result[i] = childs[i-2];
 
     return result;
 }
