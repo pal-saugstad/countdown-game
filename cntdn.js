@@ -126,7 +126,7 @@ function tidyup_result(result_in) {
     }
 
     if (swappable[result[1]]) {
-        childs = result.slice(2).sort(function(a,b) { return b[0] - a[0]; });
+        var childs = result.slice(2).sort(function(a,b) { return b[0] - a[0]; });
         for (var i = 2; i < result.length; i++)
             result[i] = childs[i-2];
     }
