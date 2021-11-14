@@ -19,7 +19,7 @@
 var use_console = (typeof(run_from_browser) === 'undefined');
 
 function debug_log(text) {
-//  if (use_console) console.log(text);
+  if (use_console) console.log(text);
 }
 
 var s = [];
@@ -30,23 +30,23 @@ var first_zero_calculation = 0;
 
 var OPS = [
     function(n1, n2) {
-      if (n2 >= n1) return [n1[0]+n2[0], '+', n2, n1];
-      return [n1[0]+n2[0], '+', n1, n2];
+      if (n2 >= n1) return [n1[0]+n2[0], '+', 5, n2, n1];
+      return [n1[0]+n2[0], '+', 5, n1, n2];
     },
     function(n1, n2) {
       if (n2[0] == n1[0]) return false;
-      if (n1[0] >  n2[0]) return [n1[0]-n2[0], '+', n1, n2];
-      return [n2[0]-n1[0], '+', n2, n1];
+      if (n1[0] >  n2[0]) return [n1[0]-n2[0], '+', 4, n1, n2];
+      return [n2[0]-n1[0], '+', 4, n2, n1];
     },
     function(n1, n2) {
       if (n2[0] < 2 || n1[0] < 2) return false;
-      if (n1[0] >  n2[0]) return [n1[0]*n2[0], '*', n1, n2];
-      return [n1[0]*n2[0], '*', n2, n1];
+      if (n1[0] >  n2[0]) return [n1[0]*n2[0], '*', 5, n1, n2];
+      return [n1[0]*n2[0], '*', 5, n2, n1];
     },
     function(n1, n2) {
       if (n2[0] < 2 || n1[0] < 2) return false;
-      if (n1[0]%n2[0] == 0) return [n1[0]/n2[0], '*', n1, n2];
-      if (n2[0]%n1[0] == 0) return [n2[0]/n1[0], '*', n2, n1];
+      if (n1[0]%n2[0] == 0) return [n1[0]/n2[0], '*', 4, n1, n2];
+      if (n2[0]%n1[0] == 0) return [n2[0]/n1[0], '*', 4, n2, n1];
       return false;
     }
 ];
@@ -106,25 +106,30 @@ function _recurse_solve_numbers(numbers, searchedi, was_generated, target, level
 }
 
 function tidyup_result(result_in) {
-    var result = result_in.slice();
-
-    for (var i = 2; i < result.length; i++) {
-      var child = result[i];
-
-      if (child.length > 2) {
-        child = tidyup_result(child);
-        if (child[1] == result[1]) {
-          result.splice(i--, 1);
-          result = result.concat(child.slice(2));
-        } else {
-          result[i] = child;
+   debug_log('---------------------------');
+   debug_log(JSON.stringify(result_in));
+    var children = [result_in.slice(3, result_in[2]), result_in.slice(result_in[2])];
+    var result = result_in.slice(0, 3);
+    for (var pol = 0; pol < 2; pol++) {
+      for (var i = 0; i < children[pol].length; i++) {
+        var child = children[pol][i];
+        if (child.length > 3) {
+          child = tidyup_result(child);
+          if (child[1] == result[1]) {
+            children[pol].splice(i--, 1);
+            children[pol] = children[pol].concat(child.slice(3, child[2]));
+            children[1-pol] = children[1-pol].concat(child.slice(child[2]));
+          } else {
+            children[pol][i] = child;
+          }
         }
       }
     }
-
-    var childs = result.slice(2).sort(function(a,b) { return b[0] - a[0]; });
-    for (var i = 2; i < result.length; i++)
-        result[i] = childs[i-2];
+    children[0].sort(function(a,b) { return b[0] - a[0]; });
+    children[1].sort(function(a,b) { return b[0] - a[0]; });
+    result = result.concat(children[0]);
+    result[2] = result.length;
+    result = result.concat(children[1]);
 
     return result;
 }
@@ -135,14 +140,14 @@ function stringify_result2(result, outer_op='+', leadout='') {
 
     var parts = [];
     var since_parts = [];
-    for (var i = 2; i < result.length; i++) {
+    for (var i = 3; i < result.length; i++) {
         var child = result[i];
         var send_op = result[1];
         var leadin = '';
         if (child.length == 1)
               parts.push(child[0]);
         else {
-            if ((i == 2) && send_op == '-') send_op = '+';
+            if ((i == 3) && send_op == '-') send_op = '+';
             leadin = '_';
             parts.push(stringify_result2(child, send_op, '_'));
         }
