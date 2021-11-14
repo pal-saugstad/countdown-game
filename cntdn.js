@@ -80,7 +80,7 @@ function _recurse_solve_numbers(numbers, searchedi, was_generated, target, level
                   if (abs_diff == 0 && first_zero_calculation == 0) first_zero_calculation = calculations;
                 }
                 if (new_abs_diff == abs_diff)
-                  allresults.push(JSON.stringify(r));
+                  allresults.push(r);
 
                 if (levels > 1) {
                   numbers[j] = r;
@@ -191,7 +191,7 @@ function solve_numbers(numbers, target, show_all) {
 
     if (allresults.length > 0) {
       for (const result of allresults) {
-        var tidied_result = tidyup_result(JSON.parse(result));
+        var tidied_result = tidyup_result(result);
         since = [];
         var this_str = stringify_result2(tidied_result);
         if (!got[this_str]) {
