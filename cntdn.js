@@ -128,62 +128,27 @@ function tidyup_result(result) {
     return result;
 }
 
-function serialise_result(result) {
-    var childparts = [];
+var since = [];
 
-    for (var i = 2; i < result.length; i++) {
-        var child = result[i];
-
-        if (child.length >= 4) {
-          child[0] = '_' + child[0];
-          childparts.push(serialise_result(child));
-        }
-    }
+function stringify_result2(result, outer_op='+', leadout='') {
 
     var parts = [];
-    for (var i = 0; i < childparts.length; i++) {
-        parts = parts.concat(childparts[i]);
-    }
-
-    var sliced = result.slice(2).map(function(l) {
-       return l[0];
-     });
-     var r = result[0];
-     if (isNaN(r))
-         r = r.split('_')[1]+'_';
-    var thispart = [r, result[1]].concat(sliced);
-
-    return parts.concat([thispart]);
-}
-
-function stringify_result(serialised) {
-    var output = [];
-
-    var result = serialised[serialised.length-1][0];
-
-    for (var i = 0; i < serialised.length; i++) {
-        var x = serialised[i];
-
-        var args = x.slice(2);
-        output.push(args.join(' ' + x[1] + ' ') + ' = ' + x[0]);
-    }
-    return output.join(' | ');
-}
-
-function stringify_result2(result, outer_op='+') {
-
-    var parts = [];
+    var since_parts = [];
     for (var i = 2; i < result.length; i++) {
         var child = result[i];
         var send_op = result[1];
+        var leadin = '';
         if (child.length == 1)
               parts.push(child[0]);
         else {
             if ((i == 2) && send_op == '-') send_op = '+';
-            parts.push(stringify_result2(child, send_op));
+            leadin = '_';
+            parts.push(stringify_result2(child, send_op, '_'));
         }
+        since_parts.push(leadin + child[0]);
     }
 
+    since.push(since_parts.join(' ' + result[1] + ' ') + ' = ' + result[0] + leadout);
     if (outer_op != '+' && result[1] != '*') {
         return '(' + parts.join(' ' + result[1] + ' ') + ')';
     }
@@ -227,12 +192,12 @@ function solve_numbers(numbers, target, show_all) {
     }
 
     if (allresults.length > 0) {
-      var equals = JSON.parse(allresults[0])[0];
       for (const result of allresults) {
         var tidied_result = tidyup_result(JSON.parse(result));
+        since = [];
         var this_str = stringify_result2(tidied_result);
         if (!got[this_str]) {
-          got[this_str] = stringify_result(serialise_result(tidied_result));
+          got[this_str] = since.join(' | ');
           s.push(this_str);
         }
       }
