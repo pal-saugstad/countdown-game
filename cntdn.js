@@ -25,6 +25,7 @@ function debug_log(text) {
 var allresults = [];
 var abs_diff;
 var calculations = 0;
+var first_zero_calculation = 0;
 
 var OPS = [
     function(n1, n2) {
@@ -76,6 +77,7 @@ function _recurse_solve_numbers(numbers, searchedi, was_generated, target, level
                 if (new_abs_diff < abs_diff) {
                   allresults = [];
                   abs_diff = new_abs_diff;
+                  if (abs_diff == 0 && first_zero_calculation == 0) first_zero_calculation = calculations;
                 }
                 if (new_abs_diff == abs_diff)
                   allresults.push(JSON.stringify(r));
@@ -207,6 +209,7 @@ function solve_numbers(numbers, target, show_all) {
 
     abs_diff = Math.abs(numbers[0] - target) + 1;
     calculations = 0;
+    first_zero_calculation = 0;
 
     allresults = [];
     _solve_numbers(numbers, target);
@@ -247,7 +250,7 @@ function solve_numbers(numbers, target, show_all) {
     var res_best = val + divider + "since: " + got[val];
     if (use_console) {
       if (!show_all) s = [ res_best ];
-      var conclusion = "\nResults: " + no_of_same_res + ". Calculations: " + calculations + ".";
+      var conclusion = "\nResults: " + no_of_same_res + ". Calculations: " + calculations + ". First time zero: " + first_zero_calculation + ".";
       if (abs_diff)
          conclusion = "\nResults: NONE. Calculations: " + calculations + ". Found " + no_of_same_res + " equations, off by " + abs_diff;
       return s.reverse().join("\n") + conclusion;
@@ -306,9 +309,11 @@ if (use_console) {
     console.log("Eight parameter:      If 0 or absent: Show best solution, if 1: Show all solutions");
 
   } else {
+    console.time('Time');
     console.log('');
     console.log(solve_numbers(input, target, show_all == 1));
     console.log('Input:', input, ', Target:', [target], ', Show:', [show_all == 1 ? 'All results' : 'Best result' ]);
+    console.timeEnd('Time');
     console.log('');
   }
 }
