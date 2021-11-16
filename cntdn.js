@@ -19,7 +19,7 @@
 var use_console = (typeof(run_from_browser) === 'undefined');
 
 function debug_log(text) {
-  if (use_console) console.log(text);
+//  if (use_console) console.log(text);
 }
 
 var s = [];
@@ -106,8 +106,6 @@ function _recurse_solve_numbers(numbers, searchedi, was_generated, target, level
 }
 
 function tidyup_result(result_in) {
-   debug_log('---------------------------');
-   debug_log(JSON.stringify(result_in));
     var children = [result_in.slice(3, result_in[2]), result_in.slice(result_in[2])];
     var result = result_in.slice(0, 3);
     for (var pol = 0; pol < 2; pol++) {
@@ -138,6 +136,7 @@ var since = [];
 
 function stringify_result2(result, outer_op='+', leadout='') {
 
+    var alt_d = {'+': '-', '*': '/'};
     var parts = [];
     var since_parts = [];
     for (var i = 3; i < result.length; i++) {
@@ -147,18 +146,34 @@ function stringify_result2(result, outer_op='+', leadout='') {
         if (child.length == 1)
               parts.push(child[0]);
         else {
-            if ((i == 3) && send_op == '-') send_op = '+';
             leadin = '_';
             parts.push(stringify_result2(child, send_op, '_'));
         }
         since_parts.push(leadin + child[0]);
     }
+    var opart = []; // output parts
+    var spart = []; // since parts
+    var neg_split = result[2] - 3; // border index where the negative/inverted part of the equation starts
+    spart.push(since_parts.slice(0, neg_split).join(' ' + result[1]  + ' '));
+    opart.push(parts.slice(0, neg_split).join(' ' + result[1]  + ' '));
+    var neg_spart = since_parts.slice(neg_split);
+    var neg_opart = parts.slice(neg_split);
 
-    since.push(since_parts.join(' ' + result[1] + ' ') + ' = ' + result[0] + leadout);
-    if (outer_op != '+' && result[1] != '*') {
-        return '(' + parts.join(' ' + result[1] + ' ') + ')';
+    if (neg_opart.length > 1 && result[1] == '*') {
+      spart.push('(' + neg_spart.join(' ' + result[1]  + ' ') + ')');
+      opart.push('(' + neg_opart.join(' ' + result[1]  + ' ') + ')');
+    } else if (neg_opart.length > 0) {
+      spart.push(neg_spart.join(' ' + alt_d[result[1]] + ' '));
+      opart.push(neg_opart.join(' ' + alt_d[result[1]] + ' '));
     }
-    return parts.join(' ' + result[1] + ' ');
+
+    since.push(spart.join(' ' + alt_d[result[1]] + ' ') + ' = ' + result[0] + leadout);
+    var txt = opart.join(' ' + alt_d[result[1]] + ' ');
+
+    if (outer_op != '+' && result[1] != '*') {
+        return '(' + txt + ')';
+    }
+    return txt;
 }
 
 function _solve_numbers(numbers, target) {
