@@ -123,8 +123,8 @@ function tidyup_result(result_in) {
         }
       }
     }
-    children[0].sort(function(a,b) { return b[0] - a[0]; });
-    children[1].sort(function(a,b) { return b[0] - a[0]; });
+    children[0].sort(function(a,b) { return (b[0] << 3) + b.length > (a[0] << 3) + a.length; });
+    children[1].sort(function(a,b) { return (b[0] << 3) + b.length > (a[0] << 3) + a.length; });
     result = result.concat(children[0]);
     result[2] = result.length;
     result = result.concat(children[1]);
