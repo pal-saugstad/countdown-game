@@ -49,7 +49,7 @@ var OPS = [
     }
 ];
 
-function _recurse_solve_numbers(numbers, searchedi, was_generated, target, levels) {
+function _recurse_solve_numbers(numbers, searchedi, target, levels) {
     for (var i = 0; i < numbers.length-1; i++) {
         var ni = numbers[i];
 
@@ -64,7 +64,7 @@ function _recurse_solve_numbers(numbers, searchedi, was_generated, target, level
             if (nj === false)
                 continue;
 
-            if (i < searchedi && !was_generated[i] && !was_generated[j])
+            if (i < searchedi && ni.length == 1 && nj.length ==1)
                 continue;
 
             for (var op of OPS) {
@@ -90,10 +90,7 @@ function _recurse_solve_numbers(numbers, searchedi, was_generated, target, level
 
                 if (levels > 1) {
                   numbers[j] = r;
-                  var old_was_gen = was_generated[j];
-                  was_generated[j] = true;
-                  _recurse_solve_numbers(numbers, i+1, was_generated, target, levels-1);
-                  was_generated[j] = old_was_gen;
+                  _recurse_solve_numbers(numbers, i+1, target, levels-1);
                   numbers[j] = nj;
                 }
             }
@@ -177,13 +174,8 @@ function stringify_result2(result, outer_op='+', leadout='') {
 function _solve_numbers(numbers, target) {
     numbers = numbers.map(function(x) { return [x] });
 
-    var was_generated = [];
-    for (var i = 0; i < numbers.length; i++)
-      was_generated.push(false);
-
-
     /* attempt to solve with dfs */
-    _recurse_solve_numbers(numbers, 0, was_generated, target, numbers.length);
+    _recurse_solve_numbers(numbers, 0, target, numbers.length);
 
 }
 
