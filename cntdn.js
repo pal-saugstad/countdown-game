@@ -30,7 +30,6 @@ var first_zero_calculation = 0;
 
 var OPS = [
     function(n1, n2) {
-      if (n2 >= n1) return [n1[0]+n2[0], '+', 5, n2, n1];
       return [n1[0]+n2[0], '+', 5, n1, n2];
     },
     function(n1, n2) {
@@ -40,7 +39,6 @@ var OPS = [
     },
     function(n1, n2) {
       if (n2[0] < 2 || n1[0] < 2) return false;
-      if (n1[0] >  n2[0]) return [n1[0]*n2[0], '*', 5, n1, n2];
       return [n1[0]*n2[0], '*', 5, n2, n1];
     },
     function(n1, n2) {
@@ -51,26 +49,14 @@ var OPS = [
     }
 ];
 
-function _recurse_solve_numbers(numbers, searchedi, was_generated, target, levels) {
+function _recurse_solve_numbers(numbers, searchedi, target) {
     for (var i = 0; i < numbers.length-1; i++) {
-        var ni = numbers[i];
-
-        if (ni === false)
-            continue;
-
-        numbers[i] = false;
-
         for (var j = i+1; j < numbers.length; j++) {
-            var nj = numbers[j];
-
-            if (nj === false)
+            if (i < searchedi && numbers[i].length == 1 && numbers[j].length == 1)
                 continue;
 
-            if (i < searchedi && !was_generated[i] && !was_generated[j])
-                continue;
-
-            for (var o in OPS) {
-                var r = OPS[o](ni, nj);
+            for (var op of OPS) {
+                var r = op(numbers[i], numbers[j]);
                 if (r === false)
                     continue;
                 var new_abs_diff = Math.abs(r[0]-target);
@@ -89,19 +75,15 @@ function _recurse_solve_numbers(numbers, searchedi, was_generated, target, level
                     s.push(this_str);
                   }
                 }
-
-                if (levels > 1) {
-                  numbers[j] = r;
-                  var old_was_gen = was_generated[j];
-                  was_generated[j] = true;
-                  _recurse_solve_numbers(numbers, i+1, was_generated, target, levels-1);
-                  was_generated[j] = old_was_gen;
-                  numbers[j] = nj;
+                if (new_abs_diff == 0) break;
+                if (numbers.length > 2) {
+                  var numbers_out = numbers.slice();
+                  numbers_out[j] = r;
+                  numbers_out.splice(i, 1);
+                  _recurse_solve_numbers(numbers_out, i, target);
                 }
             }
         }
-
-        numbers[i] = ni;
     }
 }
 
@@ -176,19 +158,6 @@ function stringify_result2(result, outer_op='+', leadout='') {
     return txt;
 }
 
-function _solve_numbers(numbers, target) {
-    numbers = numbers.map(function(x) { return [x] });
-
-    var was_generated = [];
-    for (var i = 0; i < numbers.length; i++)
-      was_generated.push(false);
-
-
-    /* attempt to solve with dfs */
-    _recurse_solve_numbers(numbers, 0, was_generated, target, numbers.length);
-
-}
-
 var spaces = '                                                ';
 
 function solve_numbers(numbers, target, show_all) {
@@ -197,7 +166,13 @@ function solve_numbers(numbers, target, show_all) {
     calculations = 0;
     first_zero_calculation = 0;
 
-    _solve_numbers(numbers, target);
+    numbers = numbers.map(function(x) { return [x] });
+    numbers.sort(function(a,b) {
+      return a[0] > b[0];
+    });
+
+    /* attempt to solve with dfs */
+    _recurse_solve_numbers(numbers, 0, target);
 
     for (var val of numbers) {
         var new_abs_diff = Math.abs(val - target);
@@ -257,22 +232,6 @@ if (use_console) {
         console.log("\nNegative number not allowed");
       }
     }
-  }
-  input.sort(function(a,b) {
-      return a - b;
-    }
-  );
-  slice_start = 0;
-  for (val of input) {
-    if (val > 0) break;
-    slice_start ++;
-  }
-  if (slice_start) {
-    if (slice_start > 3) {
-      help = true;
-      console.log("\nToo few positive numbers to work with");
-    }
-    input = input.slice(slice_start);
   }
   if (help) {
     console.log("\nCountdown Solver\n");
