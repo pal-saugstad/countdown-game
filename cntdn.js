@@ -49,26 +49,14 @@ var OPS = [
     }
 ];
 
-function _recurse_solve_numbers(numbers, searchedi, target, levels) {
+function _recurse_solve_numbers(numbers, searchedi, target) {
     for (var i = 0; i < numbers.length-1; i++) {
-        var ni = numbers[i];
-
-        if (ni === false)
-            continue;
-
-        numbers[i] = false;
-
         for (var j = i+1; j < numbers.length; j++) {
-            var nj = numbers[j];
-
-            if (nj === false)
-                continue;
-
-            if (i < searchedi && ni.length == 1 && nj.length ==1)
+            if (i < searchedi && numbers[i].length == 1 && numbers[j].length == 1)
                 continue;
 
             for (var op of OPS) {
-                var r = op(ni, nj);
+                var r = op(numbers[i], numbers[j]);
                 if (r === false)
                     continue;
                 var new_abs_diff = Math.abs(r[0]-target);
@@ -88,15 +76,14 @@ function _recurse_solve_numbers(numbers, searchedi, target, levels) {
                   }
                 }
 
-                if (levels > 1) {
-                  numbers[j] = r;
-                  _recurse_solve_numbers(numbers, i+1, target, levels-1);
-                  numbers[j] = nj;
+                if (numbers.length > 2) {
+                  var numbers_out = numbers.slice();
+                  numbers_out[j] = r;
+                  numbers_out.splice(i, 1);
+                  _recurse_solve_numbers(numbers_out, i, target);
                 }
             }
         }
-
-        numbers[i] = ni;
     }
 }
 
@@ -175,7 +162,7 @@ function _solve_numbers(numbers, target) {
     numbers = numbers.map(function(x) { return [x] });
 
     /* attempt to solve with dfs */
-    _recurse_solve_numbers(numbers, 0, target, numbers.length);
+    _recurse_solve_numbers(numbers, 0, target);
 
 }
 
