@@ -158,17 +158,6 @@ function stringify_result2(result, outer_op='+', leadout='') {
     return txt;
 }
 
-function _solve_numbers(numbers, target) {
-    numbers = numbers.map(function(x) { return [x] });
-    numbers.sort(function(a,b) {
-      return a[0] > b[0];
-    });
-
-    /* attempt to solve with dfs */
-    _recurse_solve_numbers(numbers, 0, target);
-
-}
-
 var spaces = '                                                ';
 
 function solve_numbers(numbers, target, show_all) {
@@ -177,7 +166,13 @@ function solve_numbers(numbers, target, show_all) {
     calculations = 0;
     first_zero_calculation = 0;
 
-    _solve_numbers(numbers, target);
+    numbers = numbers.map(function(x) { return [x] });
+    numbers.sort(function(a,b) {
+      return a[0] > b[0];
+    });
+
+    /* attempt to solve with dfs */
+    _recurse_solve_numbers(numbers, 0, target);
 
     for (var val of numbers) {
         var new_abs_diff = Math.abs(val - target);
