@@ -160,6 +160,9 @@ function stringify_result2(result, outer_op='+', leadout='') {
 
 function _solve_numbers(numbers, target) {
     numbers = numbers.map(function(x) { return [x] });
+    numbers.sort(function(a,b) {
+      return a[0] > b[0];
+    });
 
     /* attempt to solve with dfs */
     _recurse_solve_numbers(numbers, 0, target);
@@ -234,22 +237,6 @@ if (use_console) {
         console.log("\nNegative number not allowed");
       }
     }
-  }
-  input.sort(function(a,b) {
-      return a - b;
-    }
-  );
-  slice_start = 0;
-  for (val of input) {
-    if (val > 0) break;
-    slice_start ++;
-  }
-  if (slice_start) {
-    if (slice_start > 3) {
-      help = true;
-      console.log("\nToo few positive numbers to work with");
-    }
-    input = input.slice(slice_start);
   }
   if (help) {
     console.log("\nCountdown Solver\n");
