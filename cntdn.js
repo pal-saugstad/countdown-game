@@ -30,7 +30,6 @@ var first_zero_calculation = 0;
 
 var OPS = [
     function(n1, n2) {
-      if (n2 >= n1) return [n1[0]+n2[0], '+', 5, n2, n1];
       return [n1[0]+n2[0], '+', 5, n1, n2];
     },
     function(n1, n2) {
@@ -40,7 +39,6 @@ var OPS = [
     },
     function(n1, n2) {
       if (n2[0] < 2 || n1[0] < 2) return false;
-      if (n1[0] >  n2[0]) return [n1[0]*n2[0], '*', 5, n1, n2];
       return [n1[0]*n2[0], '*', 5, n2, n1];
     },
     function(n1, n2) {
@@ -69,8 +67,8 @@ function _recurse_solve_numbers(numbers, searchedi, was_generated, target, level
             if (i < searchedi && !was_generated[i] && !was_generated[j])
                 continue;
 
-            for (var o in OPS) {
-                var r = OPS[o](ni, nj);
+            for (var op of OPS) {
+                var r = op(ni, nj);
                 if (r === false)
                     continue;
                 var new_abs_diff = Math.abs(r[0]-target);
