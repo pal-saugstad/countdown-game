@@ -75,7 +75,7 @@ function _recurse_solve_numbers(numbers, searchedi, target) {
                     s.push(this_str);
                   }
                 }
-
+                if (new_abs_diff == 0) break;
                 if (numbers.length > 2) {
                   var numbers_out = numbers.slice();
                   numbers_out[j] = r;
