@@ -69,7 +69,7 @@ function _recurse_solve_numbers(numbers, searchedi, target) {
                   since = [];
                   var this_str = stringify_result2(tidyup_result(r));
                   if (!got[this_str]) {
-                    got[this_str] = since.join(' | ');
+                    got[this_str] = since.join('_ | ');
                   }
                 }
                 if (new_abs_diff == 0) break;
@@ -113,7 +113,7 @@ function tidyup_result(result_in) {
 
 var since = [];
 
-function stringify_result2(result, outer_op='+', leadout='') {
+function stringify_result2(result, outer_op='+') {
 
     var alt_d = {'+': '-', '*': '/'};
     var parts = [];
@@ -126,7 +126,7 @@ function stringify_result2(result, outer_op='+', leadout='') {
               parts.push(child[0]);
         else {
             leadin = '_';
-            parts.push(stringify_result2(child, send_op, '_'));
+            parts.push(stringify_result2(child, send_op));
         }
         since_parts.push(leadin + child[0]);
     }
@@ -146,7 +146,7 @@ function stringify_result2(result, outer_op='+', leadout='') {
       opart.push(neg_opart.join(' ' + alt_d[result[1]] + ' '));
     }
 
-    since.push(spart.join(' ' + alt_d[result[1]] + ' ') + ' = ' + result[0] + leadout);
+    since.push(spart.join(' ' + alt_d[result[1]] + ' ') + ' = ' + result[0]);
     var txt = opart.join(' ' + alt_d[result[1]] + ' ');
 
     if (outer_op != '+' && result[1] != '*') {
