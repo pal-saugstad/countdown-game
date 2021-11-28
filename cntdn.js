@@ -22,7 +22,6 @@ function debug_log(text) {
 //  if (use_console) console.log(text);
 }
 
-var s = [];
 var got = {};
 var abs_diff;
 var calculations = 0;
@@ -62,17 +61,15 @@ function _recurse_solve_numbers(numbers, searchedi, target) {
                 var new_abs_diff = Math.abs(r[0]-target);
                 calculations++;
                 if (new_abs_diff < abs_diff) {
-                  s = [];
                   got = {};
                   abs_diff = new_abs_diff;
-                  if (abs_diff == 0 && first_zero_calculation == 0) first_zero_calculation = calculations;
+                  if (abs_diff == 0 && first_zero_calculation == -1) first_zero_calculation = calculations;
                 }
                 if (new_abs_diff == abs_diff) {
                   since = [];
                   var this_str = stringify_result2(tidyup_result(r));
                   if (!got[this_str]) {
-                    got[this_str] = since.join(' | ');
-                    s.push(this_str);
+                    got[this_str] = since.join('_ | ');
                   }
                 }
                 if (new_abs_diff == 0) break;
@@ -116,7 +113,7 @@ function tidyup_result(result_in) {
 
 var since = [];
 
-function stringify_result2(result, outer_op='+', leadout='') {
+function stringify_result2(result, outer_op='+') {
 
     var alt_d = {'+': '-', '*': '/'};
     var parts = [];
@@ -129,7 +126,7 @@ function stringify_result2(result, outer_op='+', leadout='') {
               parts.push(child[0]);
         else {
             leadin = '_';
-            parts.push(stringify_result2(child, send_op, '_'));
+            parts.push(stringify_result2(child, send_op));
         }
         since_parts.push(leadin + child[0]);
     }
@@ -149,7 +146,7 @@ function stringify_result2(result, outer_op='+', leadout='') {
       opart.push(neg_opart.join(' ' + alt_d[result[1]] + ' '));
     }
 
-    since.push(spart.join(' ' + alt_d[result[1]] + ' ') + ' = ' + result[0] + leadout);
+    since.push(spart.join(' ' + alt_d[result[1]] + ' ') + ' = ' + result[0]);
     var txt = opart.join(' ' + alt_d[result[1]] + ' ');
 
     if (outer_op != '+' && result[1] != '*') {
@@ -164,7 +161,20 @@ function solve_numbers(numbers, target, show_all) {
 
     abs_diff = Math.abs(numbers[0] - target) + 1;
     calculations = 0;
-    first_zero_calculation = 0;
+    first_zero_calculation = -1;
+
+    for (var val of numbers) {
+        var new_abs_diff = Math.abs(val - target);
+        calculations++;
+        if (new_abs_diff < abs_diff) {
+          got = {};
+          abs_diff = new_abs_diff;
+          if (abs_diff == 0 && first_zero_calculation == -1) first_zero_calculation = calculations;
+        }
+        if (new_abs_diff == abs_diff) {
+          got[val.toString()] = val + ' = ' + val;
+        }
+    }
 
     numbers = numbers.map(function(x) { return [x] });
     numbers.sort(function(a,b) {
@@ -174,16 +184,8 @@ function solve_numbers(numbers, target, show_all) {
     /* attempt to solve with dfs */
     _recurse_solve_numbers(numbers, 0, target);
 
-    for (var val of numbers) {
-        var new_abs_diff = Math.abs(val - target);
-        if (new_abs_diff == 0) {
-          s.push(val.toString());
-          got[val.toString()] = val + ' = ' + val;
-          abs_diff = new_abs_diff;
-          break;
-        }
-    }
-
+    var s = [];
+    for (var key in got) s.push(key);
     no_of_same_res = s.length;
     s.sort(function(a,b) {
       return a.length - b.length;
