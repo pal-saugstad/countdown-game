@@ -666,7 +666,19 @@ function showlettersanswer() {
     }
 
     var spaces = '                                                                        ';
-    var stats_best = '<div class="res_all">1    2    3      4      5        6        7          8          9';
+
+    var stats_best = '<div class="res_stats">Found '
+          + result.length
+          + ' words of which '
+          + no_of_words[max_word_length]
+          + ' words have '
+          + max_word_length
+          + ' letters\n\n</div>'
+          + '<div class="res_best">';
+    for (i = 0; i < no_of_words[max_word_length]; i ++ ) {
+      stats_best += out_matrix[max_word_length][i] + " ";
+    }
+    stats_best += '</div><div class="res_all">1    2    3      4      5        6        7          8          9';
     res.push(stats_best);
     var row = 'init';
     for (i = 0; row.length > 0; i++) {
