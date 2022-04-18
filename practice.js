@@ -652,9 +652,17 @@ function showlettersanswer() {
     });
 
     var out_matrix = [[],[],[],[],[],[],[],[],[],[]];
-
+    var no_of_words = [0,0,0,0,0 ,0,0,0,0,0];
+    var max_word_length = 0;
     for (value of result) {
+      no_of_words[value[0].length] += 1;
       out_matrix[value[0].length].push(value[0]);
+    }
+    for (i = 9; i > 0; i--) {
+      if (no_of_words[i] > 0) {
+        max_word_length = i;
+        break;
+      }
     }
 
     var spaces = '                                                                        ';
