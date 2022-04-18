@@ -103,9 +103,11 @@ function check_seed(full_reset=true) {
   if (full_reset) $('#seed').val('');
   if (seed_result) {
     $('#generate-buttons').hide();
+    $('#l-generate-buttons').hide();
     $('#seed-div').show();
   } else {
     $('#generate-buttons').show();
+    $('#l-generate-buttons').show();
     $('#seed-div').hide();
   }
 }
@@ -115,18 +117,30 @@ $('#seed-result').change(function() {
 });
 
 $('#seed').change(function() {
-  var istring = $('#seed').val();
-  var inputs = istring.split(' ');
-  if (inputs.length == 7) {
-    for (i in inputs) {
-      if (isNaN(inputs[i])) inputs[i] = '0';
+  var istring = $('#seed').val().toUpperCase();
+  if (window.location.hash == '#numbers') {
+    var inputs = istring.split(' ');
+    if (inputs.length == 7) {
+      for (i in inputs) {
+        if (isNaN(inputs[i])) inputs[i] = '0';
+      }
+      var targ = inputs.pop();
+      defined_numbers(inputs, targ);
+    } else {
+      $('#answer').text("Wrong input format - '" + istring + "'" +
+                       "\nFormat: 7 numbers where the latter is the target" +
+                       "\nExample: '25 75 7 11 13 3 563'");
     }
-    var targ = inputs.pop();
-    defined_numbers(inputs, targ);
   } else {
-    $('#answer').text("Wrong input format - '" + istring + "'" +
-                     "\nFormat: 7 numbers where the latter is the target" +
-                     "\nExample: '25 75 7 11 13 3 563'");
+    for (i = 0; i < 9; i++) {
+      letter = '0';
+      while (istring.length) {
+        var letter = istring.substring(0,1);
+        istring = istring.substring(1);
+        if (letter <= 'Z' && letter >= 'A') break;
+      }
+      addletter(true, letter);
+    }
   }
 });
 
@@ -187,10 +201,10 @@ retime();
 
 if (window.location.hash == '#numbers') {
   numbers_switch();
-  check_seed();
 } else {
   letters_switch();
 }
+check_seed();
 
 function clocktotal() {
     return parseInt($('input[name="clocktime"]:checked').val());
@@ -260,7 +274,6 @@ function gentarget() {
 function letters_switch() {
     $('#letters-switch').removeClass('btn-light').addClass('btn-primary');
     $('#numbers-switch').removeClass('btn-primary').addClass('btn-light');
-    $('#number-switches').hide();
     $('#letters-game,#letter-buttons').css('display', 'block');
     $('#numbers-game,#number-buttons').css('display', 'none');
     if (window.location.hash)
@@ -273,7 +286,6 @@ function letters_switch() {
 function numbers_switch() {
     $('#numbers-switch').removeClass('btn-light').addClass('btn-primary');
     $('#letters-switch').removeClass('btn-primary').addClass('btn-light');
-    $('#number-switches').show();
     $('#numbers-game,#number-buttons').css('display', 'block');
     $('#letters-game,#letter-buttons').css('display', 'none');
     window.location.hash = 'numbers';
@@ -282,11 +294,11 @@ function numbers_switch() {
     reset();
 }
 
-function addletter(vowel) {
+function addletter(vowel, predef='0') {
     if (needreset)
         reset();
 
-    var letter = vowel ? getvowel() : getconsonant();
+    var letter = predef >= 'A' && predef <= 'Z' ? predef : (vowel ? getvowel() : getconsonant());
 
     $('#letter' + letteridx).html(letter);
     letters += letter;
