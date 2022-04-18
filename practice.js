@@ -643,6 +643,7 @@ function showlettersanswer() {
         stopclock();
 
     var result = [];
+    var res = [];
 
     solve_letters(letters.toLowerCase(), function(word, c) { result.push([word, c]); });
 
@@ -657,7 +658,8 @@ function showlettersanswer() {
     }
 
     var spaces = '                                                                        ';
-    var res = ['<div class="res_all">1    2    3      4      5        6        7          8          9'];
+    var stats_best = '<div class="res_all">1    2    3      4      5        6        7          8          9';
+    res.push(stats_best);
     var row = 'init';
     for (i = 0; row.length > 0; i++) {
       row = '';
