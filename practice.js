@@ -657,7 +657,7 @@ function showlettersanswer() {
     }
 
     var spaces = '                                                                        ';
-    var res = ['1    2    3      4      5        6        7          8          9'];
+    var res = ['<div class="res_all">1    2    3      4      5        6        7          8          9'];
     var row = 'init';
     for (i = 0; row.length > 0; i++) {
       row = '';
@@ -672,6 +672,7 @@ function showlettersanswer() {
       }
       res.push(row);
     }
+    res.push('</div>');
 
     if (is_conundrum) {
         r = [];
@@ -689,6 +690,7 @@ function showlettersanswer() {
         for (var i = 0; i < 9; i++)
             $('#letter' + (i+1)).html(best.charAt(i));
     }
+    check_best_result();
 
     $('#letters-show-answers-button').prop('disabled', true);
     $('#numbers-show-answer-button').prop('disabled', true);
