@@ -671,7 +671,6 @@ function showlettersanswer() {
         }
       }
       res.push(row);
-      $('#answer').html(row);
     }
 
     if (is_conundrum) {
