@@ -197,6 +197,15 @@ function solve_numbers(numbers, target, show_all) {
     });
     var divider = use_console ? "   " : "\n";
     var res_best = val + divider + "since: " + got[val];
+    var no_of_num = 0;
+    var analyze_res = val.split('');
+    var prev_is_digit = false;
+    while (analyze_res.length > 0) {
+      check_digit = analyze_res.pop();
+      is_digit = check_digit >= '0' && check_digit <= '9';
+      if (is_digit && !prev_is_digit) no_of_num++;
+      prev_is_digit = is_digit;
+    }
     if (use_console) {
       if (!show_all) s = [ res_best ];
       var conclusion = "\nResults: " + no_of_same_res + ". Calculations: " + calculations + ". First time zero: " + first_zero_calculation + ".";
@@ -206,10 +215,9 @@ function solve_numbers(numbers, target, show_all) {
     } else {
       var ret_val = '';
       if (abs_diff)
-        ret_val = "<div>Results: NONE. Off by " + abs_diff + '</div>' +
-                  '<div>Found ' + no_of_same_res + ' equations</div>';
+        ret_val = '<div>NO results. Found ' + no_of_same_res + ' equations which are Off by ' + abs_diff + '</div>';
       else
-        ret_val = '<div>Results: ' + no_of_same_res + '</div>';
+        ret_val = '<div>Found ' + no_of_same_res + ' equations. The best result is using ' + no_of_num + ' input values</div>';
       ret_val +=  '<div class="res_best">' + res_best + '</div>' +
                   '<div class="res_all">' + s.join("\n") + '</div>';
       return ret_val;
