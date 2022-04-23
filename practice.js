@@ -89,22 +89,8 @@ function check_best_result() {
   }
 }
 
-function check_seed(full_reset=true) {
-  var seed_result = $('#seed-result').prop('checked');
-  if (full_reset) $('#seed').val('');
-  if (seed_result) {
-    $('#generate-buttons').hide();
-    $('#l-generate-buttons').hide();
-    $('#seed-form').show();
-  } else {
-    $('#generate-buttons').show();
-    $('#l-generate-buttons').show();
-    $('#seed-form').hide();
-  }
-}
-
-$('#seed-result').change(function() {
-  check_seed();
+$('#best-result').change(function() {
+  check_best_result();
 });
 
 $('#seed-form').submit(seedform);
@@ -189,7 +175,6 @@ if (window.location.hash == '#numbers') {
 } else {
   letters_switch();
 }
-check_seed();
 
 function clocktotal() {
     return parseInt($('input[name="clocktime"]:checked').val());
@@ -632,7 +617,6 @@ function reset(full_reset=false) {
     $('#letters-show-answers-button').removeClass('btn-warning');
     $('#numbers-show-answer-button').addClass('btn-success');
     $('#numbers-show-answer-button').removeClass('btn-warning');
-    check_seed(full_reset);
 }
 
 function showlettersanswer() {
