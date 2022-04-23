@@ -81,19 +81,24 @@
                     </div>
                 </div>
 
-                <div id="seed-div" style="height: 49px">
-                  <input id="seed" style="width: 85%" placeholder="Define the inputs here"></textarea>
-                </div>
+                <form id="seed-form">
+                  <div class="row">
+                    <div class="col-sm-9">
+                        <input id="seed" class="form-control" type="text" placeholder="Predefined inputs here">
+                    </div>
+                    <div class="col-sm-3">
+                        <button type="submit" class="btn btn-primary" id="input-go-button">Go</button>
+                    </div>
+                  </div>
+                </form>
                 <div class="row">
                     <div id="letter-buttons" class="col-sm">
-                      <div id="l-generate-buttons">
                         <div class="btn-group">
                             <button class="btn btn-light" id="vowel-button">Vowel</button>
                             <button class="btn btn-light" id="consonant-button">Consonant</button>
                         </div>
                         <button class="btn btn-info" id="auto-fill-button">Random fill</button>
                         <button class="btn btn-info" id="conundrum-button">Conundrum</button>
-                      </div>
                         <button class="btn btn-success" id="letters-show-answers-button" disabled="">Show answers</button>
                         <button class="btn btn-danger" id="letters-reset-button">Reset</button>
                         <form id="check-word">
@@ -109,8 +114,7 @@
                         <div id="check-word-output"></div>
                     </div>
                     <div id="number-buttons" class="col-sm">
-
-                        <div class="btn-group" id="generate-buttons">
+                        <div class="btn-group">
                             <button class="btn btn-light" id="0large">0 large</button>
                             <button class="btn btn-light" id="1large">1 large</button>
                             <button class="btn btn-light" id="2large">2 large</button>
@@ -125,37 +129,11 @@
                 </div>
                 <div id="switches">
                     <div class="row">
-                      <div class="col-sm">
-                          <div class="form-group">
-                              <div class="form-check">
-                                  <input type="checkbox" id="seed-result" class="form-check-input" />
-                                  <label class="form-check-label" for="seed-result">Define input</label>
-                              </div>
-                          </div>
-                      </div>
-                      <div class="col-sm">
-                          <div class="form-group">
-                              <div class="form-check">
-                                  <input type="checkbox" id="best-result" class="form-check-input" checked />
-                                  <label class="form-check-label" for="best-result">Best result</label>
-                              </div>
-                          </div>
-                      </div>
-                      <div class="col-sm">
-                          <div class="form-group">
-                              <div class="form-check">
-                                  <input type="checkbox" id="stats-result" class="form-check-input" checked />
-                                  <label class="form-check-label" for="stats-result">Statistics</label>
-                              </div>
-                          </div>
-                      </div>
-                    </div>
-                    <div class="row">
                         <div class="col-sm">
                             <div class="form-group">
                                 <div class="form-check">
                                     <input type="checkbox" id="enable-music" class="form-check-input" checked />
-                                    <label class="form-check-label" for="enable-music">Enable sound</label>
+                                    <label class="form-check-label" for="enable-music">Enable&nbsp;sound</label>
                                 </div>
                             </div>
                         </div>
@@ -163,12 +141,18 @@
                             <div class="form-group">
                                 <div class="form-check">
                                     <input type="checkbox" id="automatic-timer" class="form-check-input" checked />
-                                    <label class="form-check-label" for="automatic-timer">Automatic timer</label>
+                                    <label class="form-check-label" for="automatic-timer">Automatic&nbsp;timer</label>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
+                        <div class="col-sm">
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input type="checkbox" id="best-result" class="form-check-input" checked />
+                                    <label class="form-check-label" for="best-result">Best&nbsp;result</label>
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-sm-12">
                             <div class="form-group">
                                 Clock time:

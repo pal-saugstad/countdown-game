@@ -44,6 +44,7 @@ var vowels, cons;
 var letters;
 var needreset;
 var best_result = true;
+var seed = '';
 $('#vowel-button').click(function() {
     addletter(true);
 });
@@ -65,7 +66,7 @@ $('#4large').click(function() { gennumbers(4); });
 $('#random-large').click(function() {
     gennumbers(Math.floor(Math.random() * 5));
 });
-$('#numbers-reset-button').click(function() { reset(true); });
+$('#numbers-reset-button').click(reset);
 
 $('#conundrum-clue').click(show_conundrum_clue);
 
@@ -79,7 +80,6 @@ $('#enable-music').change(function() {
 
 function check_best_result() {
   var best_result = $('#best-result').prop('checked');
-  var stats_result = $('#stats-result').prop('checked');
   if (best_result) {
     $('.res_best').show();
     $('.res_all').hide();
@@ -87,63 +87,34 @@ function check_best_result() {
     $('.res_best').hide();
     $('.res_all').show();
   }
-  if (stats_result) {
-    $('.res_stats').show();
-  } else {
-    $('.res_stats').hide();
-  }
 }
 
 $('#best-result').change(function() {
   check_best_result();
 });
 
-function check_seed(full_reset=true) {
-  var seed_result = $('#seed-result').prop('checked');
-  if (full_reset) $('#seed').val('');
-  if (seed_result) {
-    $('#generate-buttons').hide();
-    $('#l-generate-buttons').hide();
-    $('#seed-div').show();
-  } else {
-    $('#generate-buttons').show();
-    $('#l-generate-buttons').show();
-    $('#seed-div').hide();
-  }
-}
-
-$('#seed-result').change(function() {
-  check_seed();
-});
-
-$('#seed').change(function() {
-  var istring = $('#seed').val().toUpperCase();
-  if (window.location.hash == '#numbers') {
-    var inputs = istring.split(' ');
-    if (inputs.length == 7) {
-      for (i in inputs) {
-        if (isNaN(inputs[i])) inputs[i] = '0';
+$('#seed-form').submit(seedform);
+function seedform(evt) {
+    evt.preventDefault();
+    var istring = $('#seed').val().toUpperCase();
+    if (window.location.hash == '#numbers') {
+      var inputs = istring.split(' ');
+      if (inputs.length == 7) {
+        for (i in inputs) {
+          if (isNaN(inputs[i])) inputs[i] = '0';
+        }
+        var targ = inputs.pop();
+        defined_numbers(inputs, targ);
+      } else {
+        $('#answer').text("Wrong input format - '" + istring + "'" +
+                         "\nFormat: 7 numbers where the latter is the target" +
+                         "\nExample: '25 75 7 11 13 3 563'");
       }
-      var targ = inputs.pop();
-      defined_numbers(inputs, targ);
     } else {
-      $('#answer').text("Wrong input format - '" + istring + "'" +
-                       "\nFormat: 7 numbers where the latter is the target" +
-                       "\nExample: '25 75 7 11 13 3 563'");
+      seed = istring;
+      autofill();
     }
-  } else {
-    for (i = 0; i < 9; i++) {
-      letter = '0';
-      while (istring.length) {
-        var letter = istring.substring(0,1);
-        istring = istring.substring(1);
-        if (letter <= 'Z' && letter >= 'A') break;
-      }
-      addletter(true, letter);
-    }
-  }
-});
-
+}
 
 $('#stats-result').change(function() {
   check_best_result();
@@ -204,7 +175,6 @@ if (window.location.hash == '#numbers') {
 } else {
   letters_switch();
 }
-check_seed();
 
 function clocktotal() {
     return parseInt($('input[name="clocktime"]:checked').val());
@@ -294,11 +264,11 @@ function numbers_switch() {
     reset();
 }
 
-function addletter(vowel, predef='0') {
+function addletter(vowel, predef='') {
     if (needreset)
         reset();
 
-    var letter = predef >= 'A' && predef <= 'Z' ? predef : (vowel ? getvowel() : getconsonant());
+    var letter = predef ? predef : (vowel ? getvowel() : getconsonant());
 
     $('#letter' + letteridx).html(letter);
     letters += letter;
@@ -337,19 +307,31 @@ function autofill() {
         reset();
 
     if (letteridx <= 9) {
+        var letter = '';
+        while (seed.length) {
+            var test_letter = seed.substring(0,1);
+            seed = seed.substring(1);
+            if (test_letter >= 'A' && test_letter <= 'Z') {
+                letter = test_letter;
+                break;
+            }
+        }
         if (ncons >= 6) {
-            addletter(true);
+            addletter(true, letter);
         } else if (nvowels >= 5) {
-            addletter(false);
+            addletter(false, letter);
         } else {
             if (Math.random() < 0.5)
-                addletter(true);
+                addletter(true, letter);
             else
-                addletter(false);
+                addletter(false, letter);
         }
 
-        if (letteridx <= 9)
+        if (letteridx <= 9) {
             setTimeout(autofill, 250);
+        } else {
+            seed = '';
+        }
     }
 }
 
@@ -360,18 +342,11 @@ function conundrum() {
     solve_letters(data.toLowerCase(), function(word) { if (word.length == 9) result.push(word); });
     if (result.length == 1) {
         conundrum_result = result[0];
-        conundrum_clue = [".", ".", ".", ".", ".", ".", ".", ".", "."];
-        a = data.toUpperCase().split("");
-        letters = '';
-        for (var i = 0; i < 9; i++) {
-            $('#letter' + (i+1)).html(a[i]);
-            letters += a[i];
-        }
-        letteridx = 9;
+        conundrum_clue = ".........".split('');
+        seed = data.toUpperCase();
         is_conundrum = true;
+        autofill();
         $('#conundrum-clue').show();
-        if ($('#automatic-timer').prop("checked"))
-            startclock();
     } else {
         conundrum();
     }
@@ -588,7 +563,7 @@ function renderclock() {
     ctx.stroke();
 }
 
-function reset(full_reset=false) {
+function reset() {
     clearTimeout(numbertimeout);
 
     needreset = false;
@@ -635,7 +610,6 @@ function reset(full_reset=false) {
     $('#letters-show-answers-button').removeClass('btn-warning');
     $('#numbers-show-answer-button').addClass('btn-success');
     $('#numbers-show-answer-button').removeClass('btn-warning');
-    check_seed(full_reset);
 }
 
 function showlettersanswer() {
@@ -667,7 +641,7 @@ function showlettersanswer() {
 
     var spaces = '                                                                        ';
 
-    var stats_best = '<div class="res_stats">Found '
+    var stats_best = '<div>Found '
           + result.length
           + ' words of which '
           + no_of_words[max_word_length]
