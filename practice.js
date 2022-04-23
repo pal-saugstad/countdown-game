@@ -104,11 +104,11 @@ function check_seed(full_reset=true) {
   if (seed_result) {
     $('#generate-buttons').hide();
     $('#l-generate-buttons').hide();
-    $('#seed-div').show();
+    $('#seed-form').show();
   } else {
     $('#generate-buttons').show();
     $('#l-generate-buttons').show();
-    $('#seed-div').hide();
+    $('#seed-form').hide();
   }
 }
 

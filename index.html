@@ -81,9 +81,16 @@
                     </div>
                 </div>
 
-                <div id="seed-div" style="height: 49px">
-                  <input id="seed" style="width: 85%" placeholder="Define the inputs here"></textarea>
-                </div>
+                <form id="seed-form">
+                  <div class="row">
+                    <div class="col-sm-9">
+                        <input id="seed" class="form-control" type="text" placeholder="Define the inputs here">
+                    </div>
+                    <div class="col-sm-3">
+                        <button type="submit" class="btn btn-primary" id="input-go-button">Go</button>
+                    </div>
+                  </div>
+                </form>
                 <div class="row">
                     <div id="letter-buttons" class="col-sm">
                       <div id="l-generate-buttons">
