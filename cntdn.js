@@ -207,9 +207,9 @@ function solve_numbers(numbers, target, show_all) {
       var ret_val = '';
       if (abs_diff)
         ret_val = "<div>Results: NONE. Off by " + abs_diff + '</div>' +
-                  '<div class="res_stats">Found ' + no_of_same_res + ' equations</div>';
+                  '<div>Found ' + no_of_same_res + ' equations</div>';
       else
-        ret_val = '<div class="res_stats">Results: ' + no_of_same_res + '</div>';
+        ret_val = '<div>Results: ' + no_of_same_res + '</div>';
       ret_val +=  '<div class="res_best">' + res_best + '</div>' +
                   '<div class="res_all">' + s.join("\n") + '</div>';
       return ret_val;

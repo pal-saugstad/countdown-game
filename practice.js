@@ -80,7 +80,6 @@ $('#enable-music').change(function() {
 
 function check_best_result() {
   var best_result = $('#best-result').prop('checked');
-  var stats_result = $('#stats-result').prop('checked');
   if (best_result) {
     $('.res_best').show();
     $('.res_all').hide();
@@ -88,16 +87,7 @@ function check_best_result() {
     $('.res_best').hide();
     $('.res_all').show();
   }
-  if (stats_result) {
-    $('.res_stats').show();
-  } else {
-    $('.res_stats').hide();
-  }
 }
-
-$('#best-result').change(function() {
-  check_best_result();
-});
 
 function check_seed(full_reset=true) {
   var seed_result = $('#seed-result').prop('checked');
@@ -674,7 +664,7 @@ function showlettersanswer() {
 
     var spaces = '                                                                        ';
 
-    var stats_best = '<div class="res_stats">Found '
+    var stats_best = '<div>Found '
           + result.length
           + ' words of which '
           + no_of_words[max_word_length]
