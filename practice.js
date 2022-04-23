@@ -44,6 +44,7 @@ var vowels, cons;
 var letters;
 var needreset;
 var best_result = true;
+var seed = '';
 $('#vowel-button').click(function() {
     addletter(true);
 });
@@ -116,34 +117,28 @@ $('#seed-result').change(function() {
   check_seed();
 });
 
-$('#seed').change(function() {
-  var istring = $('#seed').val().toUpperCase();
-  if (window.location.hash == '#numbers') {
-    var inputs = istring.split(' ');
-    if (inputs.length == 7) {
-      for (i in inputs) {
-        if (isNaN(inputs[i])) inputs[i] = '0';
+$('#seed-form').submit(seedform);
+function seedform(evt) {
+    evt.preventDefault();
+    var istring = $('#seed').val().toUpperCase();
+    if (window.location.hash == '#numbers') {
+      var inputs = istring.split(' ');
+      if (inputs.length == 7) {
+        for (i in inputs) {
+          if (isNaN(inputs[i])) inputs[i] = '0';
+        }
+        var targ = inputs.pop();
+        defined_numbers(inputs, targ);
+      } else {
+        $('#answer').text("Wrong input format - '" + istring + "'" +
+                         "\nFormat: 7 numbers where the latter is the target" +
+                         "\nExample: '25 75 7 11 13 3 563'");
       }
-      var targ = inputs.pop();
-      defined_numbers(inputs, targ);
     } else {
-      $('#answer').text("Wrong input format - '" + istring + "'" +
-                       "\nFormat: 7 numbers where the latter is the target" +
-                       "\nExample: '25 75 7 11 13 3 563'");
+      seed = istring;
+      autofill();
     }
-  } else {
-    for (i = 0; i < 9; i++) {
-      letter = '0';
-      while (istring.length) {
-        var letter = istring.substring(0,1);
-        istring = istring.substring(1);
-        if (letter <= 'Z' && letter >= 'A') break;
-      }
-      addletter(true, letter);
-    }
-  }
-});
-
+}
 
 $('#stats-result').change(function() {
   check_best_result();
@@ -294,11 +289,11 @@ function numbers_switch() {
     reset();
 }
 
-function addletter(vowel, predef='0') {
+function addletter(vowel, predef='') {
     if (needreset)
         reset();
 
-    var letter = predef >= 'A' && predef <= 'Z' ? predef : (vowel ? getvowel() : getconsonant());
+    var letter = predef ? predef : (vowel ? getvowel() : getconsonant());
 
     $('#letter' + letteridx).html(letter);
     letters += letter;
@@ -337,19 +332,31 @@ function autofill() {
         reset();
 
     if (letteridx <= 9) {
+        var letter = '';
+        while (seed.length) {
+            var test_letter = seed.substring(0,1);
+            seed = seed.substring(1);
+            if (test_letter >= 'A' && test_letter <= 'Z') {
+                letter = test_letter;
+                break;
+            }
+        }
         if (ncons >= 6) {
-            addletter(true);
+            addletter(true, letter);
         } else if (nvowels >= 5) {
-            addletter(false);
+            addletter(false, letter);
         } else {
             if (Math.random() < 0.5)
-                addletter(true);
+                addletter(true, letter);
             else
-                addletter(false);
+                addletter(false, letter);
         }
 
-        if (letteridx <= 9)
+        if (letteridx <= 9) {
             setTimeout(autofill, 250);
+        } else {
+            seed = '';
+        }
     }
 }
 
