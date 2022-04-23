@@ -342,18 +342,11 @@ function conundrum() {
     solve_letters(data.toLowerCase(), function(word) { if (word.length == 9) result.push(word); });
     if (result.length == 1) {
         conundrum_result = result[0];
-        conundrum_clue = [".", ".", ".", ".", ".", ".", ".", ".", "."];
-        a = data.toUpperCase().split("");
-        letters = '';
-        for (var i = 0; i < 9; i++) {
-            $('#letter' + (i+1)).html(a[i]);
-            letters += a[i];
-        }
-        letteridx = 9;
+        conundrum_clue = ".........".split('');
+        seed = data.toUpperCase();
         is_conundrum = true;
+        autofill();
         $('#conundrum-clue').show();
-        if ($('#automatic-timer').prop("checked"))
-            startclock();
     } else {
         conundrum();
     }
