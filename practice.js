@@ -66,7 +66,7 @@ $('#4large').click(function() { gennumbers(4); });
 $('#random-large').click(function() {
     gennumbers(Math.floor(Math.random() * 5));
 });
-$('#numbers-reset-button').click(function() { reset(true); });
+$('#numbers-reset-button').click(reset);
 
 $('#conundrum-clue').click(show_conundrum_clue);
 
@@ -570,7 +570,7 @@ function renderclock() {
     ctx.stroke();
 }
 
-function reset(full_reset=false) {
+function reset() {
     clearTimeout(numbertimeout);
 
     needreset = false;
