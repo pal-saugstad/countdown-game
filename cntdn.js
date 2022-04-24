@@ -22,37 +22,37 @@ function debug_log(text) {
 //  if (use_console) console.log(text);
 }
 
-function _calc(calc_arr) {
-  var prev_len = calc_arr.length + 1;
-  while (calc_arr.length < prev_len) {
-    prev_len = calc_arr.length;
+function _calc(vals) {
+  var prev_len = vals.length + 1;
+  while (vals.length < prev_len) {
+    prev_len = vals.length;
     //var nice_print = 'in loop _calc '
-    //for (i = 0; i < calc_arr.length ; i++) nice_print += calc_arr[i];
+    //for (i = 0; i < vals.length ; i++) nice_print += vals[i];
     //console.log(nice_print);
     prev = pprev = '.';
-    for (idx = 0; idx < calc_arr.length; idx++) {
-      var curr = calc_arr[idx];
-      var next_val = (idx == (calc_arr.length - 1)) ? '.' : calc_arr[idx + 1];
+    for (idx = 0; idx < vals.length; idx++) {
+      var curr = vals[idx];
+      var next_val = (idx == (vals.length - 1)) ? '.' : vals[idx + 1];
       if (!isNaN(curr) && !isNaN(pprev)) {
         if (prev == '*' || prev == '/') {
-          calc_arr[idx-2] = prev == '/' ? pprev / curr : pprev * curr;
-          calc_arr.splice(idx-1, 2);
+          vals[idx-2] = prev == '/' ? pprev / curr : pprev * curr;
+          vals.splice(idx-1, 2);
           break;
         } else if ((prev == '+' || prev == '-') && next_val != '*' && next_val != '/') {
-          calc_arr[idx-2] = prev == '-' ? pprev - curr : pprev + curr;
-          calc_arr.splice(idx-1, 2);
+          vals[idx-2] = prev == '-' ? pprev - curr : pprev + curr;
+          vals.splice(idx-1, 2);
           break;
         }
       } else if (curr == ')' && pprev == '(') {
-        calc_arr[idx-2] = prev;
-        calc_arr.splice(idx-1, 2);
+        vals[idx-2] = prev;
+        vals.splice(idx-1, 2);
         break;
       }
       pprev = prev;
       prev = curr;
     }
   }
-  if (calc_arr.length == 1) return calc_arr[0];
+  if (vals.length == 1) return vals[0];
   else return "Couldn't interpret that";
 }
 
