@@ -24,13 +24,13 @@ function debug_log(text) {
 
 function _calc(vals) {
   vals.push('.');
-  console.log('Input to _calc ---------');
+  //console.log('Input to _calc ---------');
   var prev_len = vals.length + 1;
   while (vals.length < prev_len) {
     prev_len = vals.length;
-    var nice_print = '         _calc '
-    for (i = 0; i < vals.length - 1 ; i++) nice_print += vals[i];
-    console.log(nice_print);
+    //var nice_print = '         _calc '
+    //for (i = 0; i < vals.length - 1 ; i++) nice_print += vals[i];
+    //console.log(nice_print);
     stop = false;
     for (idx = 0; idx < vals.length-3; idx++) {
       if (!isNaN(vals[idx]) && !isNaN(vals[idx+2])) {
