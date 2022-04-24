@@ -22,37 +22,39 @@ function debug_log(text) {
 //  if (use_console) console.log(text);
 }
 
-function _calc(calc_arr) {
-  var prev_len = calc_arr.length + 1;
-  while (calc_arr.length < prev_len) {
-    prev_len = calc_arr.length;
-    //var nice_print = 'in loop _calc '
-    //for (i = 0; i < calc_arr.length ; i++) nice_print += calc_arr[i];
+function _calc(vals) {
+  vals.push('.');
+  //console.log('Input to _calc ---------');
+  var prev_len = vals.length + 1;
+  while (vals.length < prev_len) {
+    prev_len = vals.length;
+    //var nice_print = '         _calc '
+    //for (i = 0; i < vals.length - 1 ; i++) nice_print += vals[i];
     //console.log(nice_print);
-    prev = pprev = '.';
-    for (idx = 0; idx < calc_arr.length; idx++) {
-      var curr = calc_arr[idx];
-      var next_val = (idx == (calc_arr.length - 1)) ? '.' : calc_arr[idx + 1];
-      if (!isNaN(curr) && !isNaN(pprev)) {
-        if (prev == '*' || prev == '/') {
-          calc_arr[idx-2] = prev == '/' ? pprev / curr : pprev * curr;
-          calc_arr.splice(idx-1, 2);
-          break;
-        } else if ((prev == '+' || prev == '-') && next_val != '*' && next_val != '/') {
-          calc_arr[idx-2] = prev == '-' ? pprev - curr : pprev + curr;
-          calc_arr.splice(idx-1, 2);
-          break;
+    stop = false;
+    for (idx = 0; idx < vals.length-3; idx++) {
+      if (!isNaN(vals[idx]) && !isNaN(vals[idx+2])) {
+        if (vals[idx+1] == '*') {
+          vals[idx] *= vals[idx+2]; stop = true;
+        } else if (vals[idx+1] == '/') {
+          vals[idx] /= vals[idx+2]; stop = true;
+        } else if (vals[idx+3] != '*' && vals[idx+3] != '/') {
+          if (vals[idx+1] == '+') {
+            vals[idx] += vals[idx+2]; stop = true;
+          } else if (vals[idx+1] == '-') {
+            vals[idx] -= vals[idx+2]; stop = true;
         }
-      } else if (curr == ')' && pprev == '(') {
-        calc_arr[idx-2] = prev;
-        calc_arr.splice(idx-1, 2);
+        }
+      } else if (vals[idx] == '(' && vals[idx+2] == ')') {
+        vals[idx] = vals[idx+1]; stop = true;
+      }
+      if (stop) {
+        vals.splice(idx+1, 2);
         break;
       }
-      pprev = prev;
-      prev = curr;
     }
   }
-  if (calc_arr.length == 1) return calc_arr[0];
+  if (vals.length == 2) return vals[0];
   else return "Couldn't interpret that";
 }
 
