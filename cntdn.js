@@ -56,16 +56,16 @@ function _calc(calc_arr) {
   else return "Couldn't interpret that";
 }
 
-function calculate_formula(input='') {
+function calculate_formula(input, formula='') {
 //  var calc_numbers = numbers;
-  input += ' ';
-  //console.log('Input is ' + input);
+  formula += ' ';
+  //console.log('Input is ' + formula);
   var in_number = false;
   var number = 0;
   var arrayed = [];
-  while (input.length) {
-    letter = input.substring(0,1);
-    input = input.substring(1);
+  while (formula.length) {
+    letter = formula.substring(0,1);
+    formula = formula.substring(1);
     if (letter >= '0' && letter <= '9') {
       number = number * 10 + parseInt(letter);
       in_number = true;
@@ -85,6 +85,20 @@ function calculate_formula(input='') {
           arrayed.push(letter);
           break;
       }
+    }
+  }
+  var my_inputs = input.slice();
+  for (val of arrayed) {
+    var found = false;
+    if (isNaN(val)) continue;
+    for (i in my_inputs) {
+      if (my_inputs[i] == val) {
+        found = true;
+        my_inputs[i] = '.';
+      }
+    }
+    if (!found) {
+      return "Undefined input value in use: ' " + val + "'";
     }
   }
   return _calc(arrayed);
@@ -326,7 +340,7 @@ if (use_console) {
     for (formula_line of check_formulas) {
       var formulas = formula_line.split('since');
       if (formulas.length > 1) {
-        var res = calculate_formula(formulas[0]);
+        var res = calculate_formula(input, formulas[0]);
         if (res != target) {
           console.log('- ERROR - ' + formulas[0] + ' --- ' + res);
         }
