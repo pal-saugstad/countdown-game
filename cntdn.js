@@ -95,6 +95,7 @@ function calculate_formula(input, formula='') {
       if (my_inputs[i] == val) {
         found = true;
         my_inputs[i] = '.';
+        break;
       }
     }
     if (!found) {
