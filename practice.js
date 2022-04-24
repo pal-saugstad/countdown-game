@@ -53,7 +53,7 @@ $('#consonant-button').click(function() {
 });
 $('#auto-fill-button').click(autofill);
 $('#conundrum-button').click(conundrum);
-$('#letters-reset-button').click(reset);
+$('#letters-reset-button').click(reset_all);
 $('#letters-show-answers-button').click(showlettersanswer);
 $('#numbers-show-answer-button').click(shownumbersanswer);
 $('#halt-clock').click(stopclock);
@@ -66,7 +66,7 @@ $('#4large').click(function() { gennumbers(4); });
 $('#random-large').click(function() {
     gennumbers(Math.floor(Math.random() * 5));
 });
-$('#numbers-reset-button').click(reset);
+$('#numbers-reset-button').click(reset_all);
 
 $('#conundrum-clue').click(show_conundrum_clue);
 
@@ -250,7 +250,7 @@ function letters_switch() {
         window.location.hash = '';
     clocksecs = clocktotal();
     stopclock();
-    reset();
+    reset_all();
 }
 
 function numbers_switch() {
@@ -262,6 +262,7 @@ function numbers_switch() {
     clocksecs = clocktotal();
     stopclock();
     reset();
+    reset_all();
 }
 
 function addletter(vowel, predef='') {
@@ -563,6 +564,11 @@ function renderclock() {
     ctx.stroke();
 }
 
+function reset_input() {
+    $('#seed').val('');
+    seed = '';
+}
+
 function reset() {
     clearTimeout(numbertimeout);
 
@@ -610,6 +616,11 @@ function reset() {
     $('#letters-show-answers-button').removeClass('btn-warning');
     $('#numbers-show-answer-button').addClass('btn-success');
     $('#numbers-show-answer-button').removeClass('btn-warning');
+}
+
+function reset_all() {
+    reset();
+    reset_input();
 }
 
 function showlettersanswer() {
