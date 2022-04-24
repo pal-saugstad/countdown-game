@@ -347,7 +347,7 @@ function conundrum() {
         seed = data.toUpperCase();
         is_conundrum = true;
         autofill();
-        $('#conundrum-clue').show();
+        $('#conundrum-clue').css('visibility', 'visible');
     } else {
         conundrum();
     }
@@ -592,7 +592,7 @@ function reset() {
     $('#conundrum-button').prop('disabled', false);
     $('#letters-show-answers-button').prop('disabled', true);
     $('#numbers-show-answer-button').prop('disabled', true);
-    $('#conundrum-clue').hide();
+    $('#conundrum-clue').css('visibility', 'hidden');
 
     for (var i = 1; i <= 9; i++)
         $('#letter' + i).html('');
