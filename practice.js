@@ -131,8 +131,8 @@ $('#clock-reset').click(function() {
     $('#music')[0].pause();
     $('#music')[0].currentTime = 0;
     clockpaused = true;
-    $('#check-word-word').prop('disabled', false);
-    $('#check-word-button').prop('disabled', false);
+    $('#suggest-input').prop('disabled', false);
+    $('#suggest-solution-button').prop('disabled', false);
     clocksecs = clocktotal();
     renderclock();
 });
@@ -144,16 +144,16 @@ $('#clock-pauseresume').click(function() {
         $('#music')[0].play();
         clockpaused = false;
 
-        $('#check-word-word').prop('disabled', true);
-        $('#check-word-button').prop('disabled', true);
+        $('#suggest-input').prop('disabled', true);
+        $('#suggest-solution-button').prop('disabled', true);
     } else {
         $('#clock-pauseresume').text('Resume clock');
         clearInterval(clockinterval);
         $('#music')[0].pause();
         clockpaused = true;
 
-        $('#check-word-word').prop('disabled', false);
-        $('#check-word-button').prop('disabled', false);
+        $('#suggest-input').prop('disabled', false);
+        $('#suggest-solution-button').prop('disabled', false);
     }
 });
 
@@ -247,7 +247,6 @@ function letters_switch() {
     $('#numbers-switch').removeClass('btn-primary').addClass('btn-light');
     $('#letters-game,#letter-buttons').css('display', 'block');
     $('#numbers-game,#number-buttons').css('display', 'none');
-    $('#check-word').css('visibility', 'visible');
     if (window.location.hash)
         window.location.hash = '';
     clocksecs = clocktotal();
@@ -260,7 +259,6 @@ function numbers_switch() {
     $('#letters-switch').removeClass('btn-primary').addClass('btn-light');
     $('#numbers-game,#number-buttons').css('display', 'block');
     $('#letters-game,#letter-buttons').css('display', 'none');
-    $('#check-word').css('visibility', 'hidden');
     window.location.hash = 'numbers';
     clocksecs = clocktotal();
     stopclock();
@@ -384,8 +382,8 @@ function startclock() {
 
     clockpaused = false;
     $('#clock-pauseresume').text('Pause clock');
-    $('#check-word-word').prop('disabled', true);
-    $('#check-word-button').prop('disabled', true);
+    $('#suggest-input').prop('disabled', true);
+    $('#suggest-solution-button').prop('disabled', true);
     clockinterval = setInterval(tickclock, clockstep);
     clockstarted = Date.now();
     clocksecs = clocktotal();
@@ -400,8 +398,8 @@ function stopclock() {
     $('#conundrum-button').prop('disabled', false);
     for (var i = 0; i <= 4; i++)
         $('#' + i + 'large').prop('disabled', false);
-    $('#check-word-word').prop('disabled', false);
-    $('#check-word-button').prop('disabled', false);
+    $('#suggest-input').prop('disabled', false);
+    $('#suggest-solution-button').prop('disabled', false);
     clearInterval(clockinterval);
 
     $('#music')[0].currentTime = 0;
@@ -590,11 +588,11 @@ function reset() {
 
     $('#answer').html("");
     $('#working').val('');
-    $('#check-word-word').val('');
-    $('#check-word-output').html('');
-    $('#check-word-output').removeClass('alert alert-danger alert-success');
-    $('#check-word-word').prop('disabled', true);
-    $('#check-word-button').prop('disabled', true);
+    $('#suggest-input').val('');
+    $('#suggest-solution-output').html('');
+    $('#suggest-solution-output').removeClass('alert alert-danger alert-success');
+    $('#suggest-input').prop('disabled', true);
+    $('#suggest-solution-button').prop('disabled', true);
 
     for (var i = 1; i <= 6; i++)
         $('#number' + i).html('');
@@ -710,26 +708,54 @@ function showanswer() {
   }
 }
 
-$('#check-word').submit(checkword);
-function checkword(evt) {
+$('#suggest-solution').submit(checksolution);
+function checksolution(evt) {
     evt.preventDefault();
-    var word = $('#check-word-word').val();
+    var input_line = $('#suggest-input').val();
 
     var errors = '';
-    if (!sufficient_letters(word.toLowerCase(), letters.toLowerCase()))
-        errors += "Wrong letters. "; /* TODO: be more specific */
-    if (!word_in_dictionary(word.toLowerCase()))
-        errors += "Word not in dictionary.";
-
-    if (errors.length > 0) {
-        $('#check-word-output')
-            .html(errors)
+    if (window.location.hash == '#numbers') {
+      var my_numbers = [];
+      for (var i = 1; i <= 6; i++)
+          my_numbers.push(parseInt($('#number' + i).html()));
+      var target = $('#numbers-target').html();
+      answer_from_calc = calculate_formula(my_numbers, input_line);
+      if (isNaN(answer_from_calc)) {
+        $('#suggest-solution-output')
+            .html(answer_from_calc + numbers)
             .addClass('alert alert-danger')
             .removeClass('alert-success');
+      } else {
+        diff = target - answer_from_calc;
+        if (diff) {
+          if (diff < 0) diff = -diff;
+          $('#suggest-solution-output')
+              .html(answer_from_calc + ' is ' + diff + ' off from target')
+              .addClass('alert alert-danger')
+              .removeClass('alert-success');
+        } else {
+          $('#suggest-solution-output')
+              .html(answer_from_calc + ' is correct, well done!')
+              .addClass('alert alert-success')
+              .removeClass('alert-danger');
+        }
+      }
     } else {
-        $('#check-word-output')
-            .html('Nice word!')
-            .addClass('alert alert-success')
-            .removeClass('alert-danger');
+      if (!sufficient_letters(input_line.toLowerCase(), letters.toLowerCase()))
+          errors += "Wrong letters. "; /* TODO: be more specific */
+      if (!word_in_dictionary(input_line.toLowerCase()))
+          errors += "Word not in dictionary.";
+
+      if (errors.length > 0) {
+          $('#suggest-solution-output')
+              .html(errors)
+              .addClass('alert alert-danger')
+              .removeClass('alert-success');
+      } else {
+          $('#suggest-solution-output')
+              .html('Nice word!')
+              .addClass('alert alert-success')
+              .removeClass('alert-danger');
+      }
     }
 }

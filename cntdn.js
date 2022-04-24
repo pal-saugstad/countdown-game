@@ -22,6 +22,89 @@ function debug_log(text) {
 //  if (use_console) console.log(text);
 }
 
+function _calc(calc_arr) {
+  var prev_len = calc_arr.length + 1;
+  while (calc_arr.length < prev_len) {
+    prev_len = calc_arr.length;
+    //var nice_print = 'in loop _calc '
+    //for (i = 0; i < calc_arr.length ; i++) nice_print += calc_arr[i];
+    //console.log(nice_print);
+    prev = pprev = '.';
+    for (idx = 0; idx < calc_arr.length; idx++) {
+      var curr = calc_arr[idx];
+      var next_val = (idx == (calc_arr.length - 1)) ? '.' : calc_arr[idx + 1];
+      if (!isNaN(curr) && !isNaN(pprev)) {
+        if (prev == '*' || prev == '/') {
+          calc_arr[idx-2] = prev == '/' ? pprev / curr : pprev * curr;
+          calc_arr.splice(idx-1, 2);
+          break;
+        } else if ((prev == '+' || prev == '-') && next_val != '*' && next_val != '/') {
+          calc_arr[idx-2] = prev == '-' ? pprev - curr : pprev + curr;
+          calc_arr.splice(idx-1, 2);
+          break;
+        }
+      } else if (curr == ')' && pprev == '(') {
+        calc_arr[idx-2] = prev;
+        calc_arr.splice(idx-1, 2);
+        break;
+      }
+      pprev = prev;
+      prev = curr;
+    }
+  }
+  if (calc_arr.length == 1) return calc_arr[0];
+  else return "Couldn't interpret that";
+}
+
+function calculate_formula(input, formula='') {
+//  var calc_numbers = numbers;
+  formula += ' ';
+  //console.log('Input is ' + formula);
+  var in_number = false;
+  var number = 0;
+  var arrayed = [];
+  while (formula.length) {
+    letter = formula.substring(0,1);
+    formula = formula.substring(1);
+    if (letter >= '0' && letter <= '9') {
+      number = number * 10 + parseInt(letter);
+      in_number = true;
+    } else {
+      if (in_number) {
+        arrayed.push(number);
+        in_number = false;
+        number = 0;
+      }
+      switch(letter) {
+        case '(':
+        case ')':
+        case '+':
+        case '-':
+        case '*':
+        case '/':
+          arrayed.push(letter);
+          break;
+      }
+    }
+  }
+  var my_inputs = input.slice();
+  for (val of arrayed) {
+    var found = false;
+    if (isNaN(val)) continue;
+    for (i in my_inputs) {
+      if (my_inputs[i] == val) {
+        found = true;
+        my_inputs[i] = '.';
+        break;
+      }
+    }
+    if (!found) {
+      return "Undefined input value in use: ' " + val + "'";
+    }
+  }
+  return _calc(arrayed);
+}
+
 var got = {};
 var abs_diff;
 var calculations = 0;
