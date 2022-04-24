@@ -247,7 +247,6 @@ function letters_switch() {
     $('#numbers-switch').removeClass('btn-primary').addClass('btn-light');
     $('#letters-game,#letter-buttons').css('display', 'block');
     $('#numbers-game,#number-buttons').css('display', 'none');
-    $('#check-word').css('visibility', 'visible');
     if (window.location.hash)
         window.location.hash = '';
     clocksecs = clocktotal();
@@ -260,7 +259,6 @@ function numbers_switch() {
     $('#letters-switch').removeClass('btn-primary').addClass('btn-light');
     $('#numbers-game,#number-buttons').css('display', 'block');
     $('#letters-game,#letter-buttons').css('display', 'none');
-    $('#check-word').css('visibility', 'hidden');
     window.location.hash = 'numbers';
     clocksecs = clocktotal();
     stopclock();
@@ -716,20 +714,48 @@ function checkword(evt) {
     var word = $('#check-word-word').val();
 
     var errors = '';
-    if (!sufficient_letters(word.toLowerCase(), letters.toLowerCase()))
-        errors += "Wrong letters. "; /* TODO: be more specific */
-    if (!word_in_dictionary(word.toLowerCase()))
-        errors += "Word not in dictionary.";
-
-    if (errors.length > 0) {
+    if (window.location.hash == '#numbers') {
+      var my_numbers = [];
+      for (var i = 1; i <= 6; i++)
+          my_numbers.push(parseInt($('#number' + i).html()));
+      var target = $('#numbers-target').html();
+      answer_from_calc = calculate_formula(my_numbers, word);
+      if (isNaN(answer_from_calc)) {
         $('#check-word-output')
-            .html(errors)
+            .html(answer_from_calc + numbers)
             .addClass('alert alert-danger')
             .removeClass('alert-success');
+      } else {
+        diff = target - answer_from_calc;
+        if (diff) {
+          if (diff < 0) diff = -diff;
+          $('#check-word-output')
+              .html(answer_from_calc + ' is ' + diff + ' off from target')
+              .addClass('alert alert-danger')
+              .removeClass('alert-success');
+        } else {
+          $('#check-word-output')
+              .html(answer_from_calc + ' is correct, well done!')
+              .addClass('alert alert-success')
+              .removeClass('alert-danger');
+        }
+      }
     } else {
-        $('#check-word-output')
-            .html('Nice word!')
-            .addClass('alert alert-success')
-            .removeClass('alert-danger');
+      if (!sufficient_letters(word.toLowerCase(), letters.toLowerCase()))
+          errors += "Wrong letters. "; /* TODO: be more specific */
+      if (!word_in_dictionary(word.toLowerCase()))
+          errors += "Word not in dictionary.";
+
+      if (errors.length > 0) {
+          $('#check-word-output')
+              .html(errors)
+              .addClass('alert alert-danger')
+              .removeClass('alert-success');
+      } else {
+          $('#check-word-output')
+              .html('Nice word!')
+              .addClass('alert alert-success')
+              .removeClass('alert-danger');
+      }
     }
 }
