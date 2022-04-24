@@ -130,53 +130,51 @@
                     </div>
                 </form>
                 <div id="check-word-output"></div>
-                <div id="switches">
-                    <div class="row">
-                        <div class="col-sm">
-                            <div class="form-group">
-                                <div class="form-check">
-                                    <input type="checkbox" id="enable-music" class="form-check-input" checked />
-                                    <label class="form-check-label" for="enable-music">Enable&nbsp;sound</label>
-                                </div>
+                <div class="row">
+                    <div class="col-sm">
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input type="checkbox" id="enable-music" class="form-check-input" checked />
+                                <label class="form-check-label" for="enable-music">Enable&nbsp;sound</label>
                             </div>
                         </div>
-                        <div class="col-sm">
-                            <div class="form-group">
-                                <div class="form-check">
-                                    <input type="checkbox" id="automatic-timer" class="form-check-input" checked />
-                                    <label class="form-check-label" for="automatic-timer">Automatic&nbsp;timer</label>
-                                </div>
+                    </div>
+                    <div class="col-sm">
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input type="checkbox" id="automatic-timer" class="form-check-input" checked />
+                                <label class="form-check-label" for="automatic-timer">Automatic&nbsp;timer</label>
                             </div>
                         </div>
-                        <div class="col-sm">
-                            <div class="form-group">
-                                <div class="form-check">
-                                    <input type="checkbox" id="best-result" class="form-check-input" checked />
-                                    <label class="form-check-label" for="best-result">Best&nbsp;result</label>
-                                </div>
+                    </div>
+                    <div class="col-sm">
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input type="checkbox" id="best-result" class="form-check-input" checked />
+                                <label class="form-check-label" for="best-result">Best&nbsp;result</label>
                             </div>
                         </div>
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                Clock time:
-                                <input type="radio" name="clocktime" value="30" id="30clock" checked>
-                                <label for="30clock">30s</label>
-                                &nbsp;
-                                <input type="radio" name="clocktime" value="60" id="60clock">
-                                <label for="60clock">60s</label>
-                                &nbsp;
-                                <input type="radio" name="clocktime" value="90" id="90clock">
-                                <label for="90clock">90s</label>
-                            </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            Clock time:
+                            <input type="radio" name="clocktime" value="30" id="30clock" checked>
+                            <label for="30clock">30s</label>
+                            &nbsp;
+                            <input type="radio" name="clocktime" value="60" id="60clock">
+                            <label for="60clock">60s</label>
+                            &nbsp;
+                            <input type="radio" name="clocktime" value="90" id="90clock">
+                            <label for="90clock">90s</label>
                         </div>
-                        <div class="col-sm-12">
-                            <div id="timer-controls" class="btn-group" style="display:none">
-                                <button class="btn btn-primary" id="clock-start">Start clock</button>
-                                <button class="btn btn-light" id="clock-reset">Reset clock</button>
-                                <button class="btn btn-light" id="clock-pauseresume">Pause clock</button>
-                            </div>
-                            <button class="btn btn-danger" disabled="" id="halt-clock">End</button>
+                    </div>
+                    <div class="col-sm-12">
+                        <div id="timer-controls" class="btn-group" style="display:none">
+                            <button class="btn btn-primary" id="clock-start">Start clock</button>
+                            <button class="btn btn-light" id="clock-reset">Reset clock</button>
+                            <button class="btn btn-light" id="clock-pauseresume">Pause clock</button>
                         </div>
+                        <button class="btn btn-danger" disabled="" id="halt-clock">End</button>
                     </div>
                 </div>
                 <button id="conundrum-clue" style="visibility:hidden;" class="btn btn-primary">Conundrum Clue</button>
