@@ -51,11 +51,9 @@ $('#vowel-button').click(function() {
 $('#consonant-button').click(function() {
     addletter(false);
 });
-$('#auto-fill-button').click(autofill);
 $('#conundrum-button').click(conundrum);
-$('#letters-reset-button').click(reset);
-$('#letters-show-answers-button').click(showlettersanswer);
-$('#numbers-show-answer-button').click(shownumbersanswer);
+$('#reset-button').click(reset_all);
+$('#show-answers-button').click(showanswer);
 $('#halt-clock').click(stopclock);
 
 $('#0large').click(function() { gennumbers(0); });
@@ -63,10 +61,13 @@ $('#1large').click(function() { gennumbers(1); });
 $('#2large').click(function() { gennumbers(2); });
 $('#3large').click(function() { gennumbers(3); });
 $('#4large').click(function() { gennumbers(4); });
-$('#random-large').click(function() {
+$('#random-button').click(function() {
+  if (window.location.hash == '#numbers') {
     gennumbers(Math.floor(Math.random() * 5));
+  } else {
+    autofill();
+  }
 });
-$('#numbers-reset-button').click(reset);
 
 $('#conundrum-clue').click(show_conundrum_clue);
 
@@ -246,11 +247,12 @@ function letters_switch() {
     $('#numbers-switch').removeClass('btn-primary').addClass('btn-light');
     $('#letters-game,#letter-buttons').css('display', 'block');
     $('#numbers-game,#number-buttons').css('display', 'none');
+    $('#check-word').css('visibility', 'visible');
     if (window.location.hash)
         window.location.hash = '';
     clocksecs = clocktotal();
     stopclock();
-    reset();
+    reset_all();
 }
 
 function numbers_switch() {
@@ -258,10 +260,12 @@ function numbers_switch() {
     $('#letters-switch').removeClass('btn-primary').addClass('btn-light');
     $('#numbers-game,#number-buttons').css('display', 'block');
     $('#letters-game,#letter-buttons').css('display', 'none');
+    $('#check-word').css('visibility', 'hidden');
     window.location.hash = 'numbers';
     clocksecs = clocktotal();
     stopclock();
     reset();
+    reset_all();
 }
 
 function addletter(vowel, predef='') {
@@ -346,7 +350,7 @@ function conundrum() {
         seed = data.toUpperCase();
         is_conundrum = true;
         autofill();
-        $('#conundrum-clue').show();
+        $('#conundrum-clue').css('visibility', 'visible');
     } else {
         conundrum();
     }
@@ -368,14 +372,10 @@ function show_conundrum_clue() {
 function startclock() {
     $('#vowel-button').prop('disabled', true);
     $('#consonant-button').prop('disabled', true);
-    $('#auto-fill-button').prop('disabled', true);
     $('#conundrum-button').prop('disabled', true);
     for (var i = 0; i <= 4; i++)
         $('#' + i + 'large').prop('disabled', true);
-    $('#random-large').prop('disabled', true);
     $('#halt-clock').prop('disabled', false);
-    $('#letters-show-answers-button').prop('disabled', false);
-    $('#numbers-show-answer-button').prop('disabled', false);
 
     if ($('#enable-music').prop('checked'))
         $('#music')[0].play();
@@ -397,11 +397,9 @@ function startclock() {
 function stopclock() {
     $('#vowel-button').prop('disabled', false);
     $('#consonant-button').prop('disabled', false);
-    $('#auto-fill-button').prop('disabled', false);
     $('#conundrum-button').prop('disabled', false);
     for (var i = 0; i <= 4; i++)
         $('#' + i + 'large').prop('disabled', false);
-    $('#random-large').prop('disabled', false);
     $('#check-word-word').prop('disabled', false);
     $('#check-word-button').prop('disabled', false);
     clearInterval(clockinterval);
@@ -430,15 +428,11 @@ function buttonflash() {
 
 function togglebuttonflash() {
     if (buttonflashes % 2 == 0) {
-        $('#letters-show-answers-button').addClass('btn-warning');
-        $('#letters-show-answers-button').removeClass('btn-success');
-        $('#numbers-show-answer-button').addClass('btn-warning');
-        $('#numbers-show-answer-button').removeClass('btn-success');
+        $('#show-answers-button').addClass('btn-warning');
+        $('#show-answers-button').removeClass('btn-success');
     } else {
-        $('#letters-show-answers-button').addClass('btn-success');
-        $('#letters-show-answers-button').removeClass('btn-warning');
-        $('#numbers-show-answer-button').addClass('btn-success');
-        $('#numbers-show-answer-button').removeClass('btn-warning');
+        $('#show-answers-button').addClass('btn-success');
+        $('#show-answers-button').removeClass('btn-warning');
     }
     buttonflashes--;
     if (buttonflashes > 0)
@@ -563,6 +557,11 @@ function renderclock() {
     ctx.stroke();
 }
 
+function reset_input() {
+    $('#seed').val('');
+    seed = '';
+}
+
 function reset() {
     clearTimeout(numbertimeout);
 
@@ -582,11 +581,8 @@ function reset() {
 
     $('#vowel-button').prop('disabled', false);
     $('#consonant-button').prop('disabled', false);
-    $('#auto-fill-button').prop('disabled', false);
     $('#conundrum-button').prop('disabled', false);
-    $('#letters-show-answers-button').prop('disabled', true);
-    $('#numbers-show-answer-button').prop('disabled', true);
-    $('#conundrum-clue').hide();
+    $('#conundrum-clue').css('visibility', 'hidden');
 
     for (var i = 1; i <= 9; i++)
         $('#letter' + i).html('');
@@ -606,10 +602,13 @@ function reset() {
     for (var i = 0; i <= 4; i++)
         $('#' + i + 'large').prop('disabled', false);
 
-    $('#letters-show-answers-button').addClass('btn-success');
-    $('#letters-show-answers-button').removeClass('btn-warning');
-    $('#numbers-show-answer-button').addClass('btn-success');
-    $('#numbers-show-answer-button').removeClass('btn-warning');
+    $('#show-answers-button').addClass('btn-success');
+    $('#show-answers-button').removeClass('btn-warning');
+}
+
+function reset_all() {
+    reset();
+    reset_input();
 }
 
 function showlettersanswer() {
@@ -687,9 +686,6 @@ function showlettersanswer() {
             $('#letter' + (i+1)).html(best.charAt(i));
     }
     check_best_result();
-
-    $('#letters-show-answers-button').prop('disabled', true);
-    $('#numbers-show-answer-button').prop('disabled', true);
 }
 
 function shownumbersanswer() {
@@ -704,9 +700,14 @@ function shownumbersanswer() {
 
     $('#answer').html(solve_numbers(numbers, target, false));
     check_best_result();
+}
 
-    $('#letters-show-answers-button').prop('disabled', true);
-    $('#numbers-show-answer-button').prop('disabled', true);
+function showanswer() {
+  if (window.location.hash == '#numbers') {
+    shownumbersanswer();
+  } else {
+    showlettersanswer();
+  }
 }
 
 $('#check-word').submit(checkword);
