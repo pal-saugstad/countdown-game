@@ -22,6 +22,74 @@ function debug_log(text) {
 //  if (use_console) console.log(text);
 }
 
+function _calc(calc_arr) {
+  var prev_len = calc_arr.length + 1;
+  while (calc_arr.length < prev_len) {
+    prev_len = calc_arr.length;
+    //var nice_print = 'in loop _calc '
+    //for (i = 0; i < calc_arr.length ; i++) nice_print += calc_arr[i];
+    //console.log(nice_print);
+    prev = pprev = '.';
+    for (idx = 0; idx < calc_arr.length; idx++) {
+      var curr = calc_arr[idx];
+      var next_val = (idx == (calc_arr.length - 1)) ? '.' : calc_arr[idx + 1];
+      if (!isNaN(curr) && !isNaN(pprev)) {
+        if (prev == '*' || prev == '/') {
+          calc_arr[idx-2] = prev == '/' ? pprev / curr : pprev * curr;
+          calc_arr.splice(idx-1, 2);
+          break;
+        } else if ((prev == '+' || prev == '-') && next_val != '*' && next_val != '/') {
+          calc_arr[idx-2] = prev == '-' ? pprev - curr : pprev + curr;
+          calc_arr.splice(idx-1, 2);
+          break;
+        }
+      } else if (curr == ')' && pprev == '(') {
+        calc_arr[idx-2] = prev;
+        calc_arr.splice(idx-1, 2);
+        break;
+      }
+      pprev = prev;
+      prev = curr;
+    }
+  }
+  if (calc_arr.length == 1) return calc_arr[0];
+  else return "Couldn't interpret that";
+}
+
+function calculate_formula(input='') {
+//  var calc_numbers = numbers;
+  input += ' ';
+  //console.log('Input is ' + input);
+  var in_number = false;
+  var number = 0;
+  var arrayed = [];
+  while (input.length) {
+    letter = input.substring(0,1);
+    input = input.substring(1);
+    if (letter >= '0' && letter <= '9') {
+      number = number * 10 + parseInt(letter);
+      in_number = true;
+    } else {
+      if (in_number) {
+        arrayed.push(number);
+        in_number = false;
+        number = 0;
+      }
+      switch(letter) {
+        case '(':
+        case ')':
+        case '+':
+        case '-':
+        case '*':
+        case '/':
+          arrayed.push(letter);
+          break;
+      }
+    }
+  }
+  return _calc(arrayed);
+}
+
 var got = {};
 var abs_diff;
 var calculations = 0;
@@ -252,7 +320,18 @@ if (use_console) {
   } else {
     console.time('Time');
     console.log('');
-    console.log(solve_numbers(input, target, show_all == 1));
+    var results = solve_numbers(input, target, show_all == 1)
+    console.log(results);
+    var check_formulas = results.split('\n');
+    for (formula_line of check_formulas) {
+      var formulas = formula_line.split('since');
+      if (formulas.length > 1) {
+        var res = calculate_formula(formulas[0]);
+        if (res != target) {
+          console.log('- ERROR - ' + formulas[0] + ' --- ' + res);
+        }
+      }
+    }
     console.log('Input:', input, ', Target:', [target], ', Show:', [show_all == 1 ? 'All results' : 'Best result' ]);
     console.timeEnd('Time');
     console.log('');
