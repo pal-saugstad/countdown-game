@@ -26,9 +26,9 @@ function _calc(vals) {
   var prev_len = vals.length + 1;
   while (vals.length < prev_len) {
     prev_len = vals.length;
-    //var nice_print = 'in loop _calc '
-    //for (i = 0; i < vals.length ; i++) nice_print += vals[i];
-    //console.log(nice_print);
+    var nice_print = 'in loop _calc '
+    for (i = 0; i < vals.length ; i++) nice_print += vals[i];
+    console.log(nice_print);
     prev = pprev = '.';
     for (idx = 0; idx < vals.length; idx++) {
       var curr = vals[idx];
