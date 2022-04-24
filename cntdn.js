@@ -101,7 +101,7 @@ function calculate_formula(input, formula='') {
       }
     }
     if (!found) {
-      return "Undefined input value in use: ' " + val + "'";
+      return "Undefined input value in use: '" + val + "'";
     }
   }
   return _calc(arrayed);
