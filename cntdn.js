@@ -95,6 +95,7 @@ function calculate_formula(input, formula='') {
       if (my_inputs[i] == val) {
         found = true;
         my_inputs[i] = '.';
+        break;
       }
     }
     if (!found) {
@@ -334,18 +335,7 @@ if (use_console) {
   } else {
     console.time('Time');
     console.log('');
-    var results = solve_numbers(input, target, show_all == 1)
-    console.log(results);
-    var check_formulas = results.split('\n');
-    for (formula_line of check_formulas) {
-      var formulas = formula_line.split('since');
-      if (formulas.length > 1) {
-        var res = calculate_formula(input, formulas[0]);
-        if (res != target) {
-          console.log('- ERROR - ' + formulas[0] + ' --- ' + res);
-        }
-      }
-    }
+    console.log(solve_numbers(input, target, show_all == 1));
     console.log('Input:', input, ', Target:', [target], ', Show:', [show_all == 1 ? 'All results' : 'Best result' ]);
     console.timeEnd('Time');
     console.log('');
