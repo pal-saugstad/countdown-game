@@ -246,6 +246,7 @@ function letters_switch() {
     $('#numbers-switch').removeClass('btn-primary').addClass('btn-light');
     $('#letters-game,#letter-buttons').css('display', 'block');
     $('#numbers-game,#number-buttons').css('display', 'none');
+    $('#check-word').css('visibility', 'visible');
     if (window.location.hash)
         window.location.hash = '';
     clocksecs = clocktotal();
@@ -258,6 +259,7 @@ function numbers_switch() {
     $('#letters-switch').removeClass('btn-primary').addClass('btn-light');
     $('#numbers-game,#number-buttons').css('display', 'block');
     $('#letters-game,#letter-buttons').css('display', 'none');
+    $('#check-word').css('visibility', 'hidden');
     window.location.hash = 'numbers';
     clocksecs = clocktotal();
     stopclock();
