@@ -25,27 +25,27 @@ function debug_log(text) {
 function _calc(vals) {
   vals.push('.');
   //console.log('Input to _calc ---------');
-  var stop = true;
-  while (stop) {
+  var more = true;
+  while (more) {
     //var nice_print = '         _calc '
     //for (i = 0; i < vals.length - 1 ; i++) nice_print += vals[i];
     //console.log(nice_print);
-    stop = false;
-    for (idx = 0; idx < vals.length-3 && !stop; idx++) {
+    more = false;
+    for (idx = 0; idx < vals.length-3 && !more; idx++) {
       if (!isNaN(vals[idx]) && !isNaN(vals[idx+2])) {
         if (vals[idx+1] == '*') {
-          vals[idx] *= vals[idx+2]; stop = true;
+          vals[idx] *= vals[idx+2]; more = true;
         } else if (vals[idx+1] == '/') {
-          vals[idx] /= vals[idx+2]; stop = true;
+          vals[idx] /= vals[idx+2]; more = true;
         } else if (vals[idx+3] != '*' && vals[idx+3] != '/') {
           if (vals[idx+1] == '+') {
-            vals[idx] += vals[idx+2]; stop = true;
+            vals[idx] += vals[idx+2]; more = true;
           } else if (vals[idx+1] == '-') {
-            vals[idx] -= vals[idx+2]; stop = true;
+            vals[idx] -= vals[idx+2]; more = true;
           }
         }
       } else if (vals[idx] == '(' && vals[idx+2] == ')') {
-        vals[idx] = vals[idx+1]; stop = true;
+        vals[idx] = vals[idx+1]; more = true;
       }
     }
     if (vals.length == 2 && !isNaN(vals[0])) return vals[0];
