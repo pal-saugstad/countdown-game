@@ -82,6 +82,10 @@ function calculate_formula(input, formula='') {
         case '/':
           arrayed.push(letter);
           break;
+        case ' ':
+          break;
+        default:
+          return "Illegal character found: '" + letter + "' (Legal: '()+-*/ and numbers')"
       }
     }
   }
