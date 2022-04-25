@@ -25,14 +25,13 @@ function debug_log(text) {
 function _calc(vals) {
   vals.push('.');
   //console.log('Input to _calc ---------');
-  var prev_len = vals.length + 1;
-  while (vals.length < prev_len) {
-    prev_len = vals.length;
+  var stop = true;
+  while (stop) {
     //var nice_print = '         _calc '
     //for (i = 0; i < vals.length - 1 ; i++) nice_print += vals[i];
     //console.log(nice_print);
     stop = false;
-    for (idx = 0; idx < vals.length-3; idx++) {
+    for (idx = 0; idx < vals.length-3 && !stop; idx++) {
       if (!isNaN(vals[idx]) && !isNaN(vals[idx+2])) {
         if (vals[idx+1] == '*') {
           vals[idx] *= vals[idx+2]; stop = true;
@@ -43,19 +42,16 @@ function _calc(vals) {
             vals[idx] += vals[idx+2]; stop = true;
           } else if (vals[idx+1] == '-') {
             vals[idx] -= vals[idx+2]; stop = true;
-        }
+          }
         }
       } else if (vals[idx] == '(' && vals[idx+2] == ')') {
         vals[idx] = vals[idx+1]; stop = true;
       }
-      if (stop) {
-        vals.splice(idx+1, 2);
-        break;
-      }
     }
-  }
-  if (vals.length == 2) return vals[0];
-  else return "Couldn't interpret that";
+    if (vals.length == 2 && !isNaN(vals[0])) return vals[0];
+    vals.splice(idx, 2);
+    }
+  return "Couldn't interpret that";
 }
 
 function calculate_formula(input, formula='') {
