@@ -278,8 +278,7 @@ function solve_numbers(numbers, target, show_all) {
     s.forEach(function (value, i) {
       s[i] = value + spaces.substring(0, tab_length - s[i].length) + calculate_formula([], value);
     });
-    var divider = use_console ? "   " : "\n";
-    var res_best = val + " " + calculate_formula([], val);
+    var res_best = val + "\n\n" + calculate_formula([], val);
     var no_of_num = 0;
     var analyze_res = val.split('');
     var prev_is_digit = false;
@@ -301,6 +300,7 @@ function solve_numbers(numbers, target, show_all) {
         ret_val = '<div>NO results. Found ' + no_of_same_res + ' equations which are Off by ' + abs_diff + '</div>';
       else
         ret_val = '<div>Found ' + no_of_same_res + ' equations. The best result is using ' + no_of_num + ' input values</div>';
+      ret_val +=  '<div>&nbsp;</div>'
       ret_val +=  '<div class="res_best">' + res_best + '</div>' +
                   '<div class="res_all">' + s.join("\n") + '</div>';
       return ret_val;
