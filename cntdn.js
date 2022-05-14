@@ -125,7 +125,6 @@ function calculate_formula(input, formula='') {
 var got = {};
 var abs_diff;
 var calculations = 0;
-var first_zero_calculation = 0;
 
 var OPS = [
     function(n1, n2) {
@@ -163,7 +162,6 @@ function _recurse_solve_numbers(numbers, searchedi, target) {
                 if (new_abs_diff < abs_diff) {
                   got = {};
                   abs_diff = new_abs_diff;
-                  if (abs_diff == 0 && first_zero_calculation == -1) first_zero_calculation = calculations;
                 }
                 if (new_abs_diff == abs_diff) {
                   got[stringify_result2(tidyup_result(r))] = 1;
@@ -244,7 +242,6 @@ function solve_numbers(numbers, target, show_all) {
 
     abs_diff = Math.abs(numbers[0] - target) + 1;
     calculations = 0;
-    first_zero_calculation = -1;
 
     for (var val of numbers) {
         var new_abs_diff = Math.abs(val - target);
@@ -252,7 +249,6 @@ function solve_numbers(numbers, target, show_all) {
         if (new_abs_diff < abs_diff) {
           got = {};
           abs_diff = new_abs_diff;
-          if (abs_diff == 0 && first_zero_calculation == -1) first_zero_calculation = calculations;
         }
         if (new_abs_diff == abs_diff) {
           got[val.toString()] = val + ' = ' + val;
@@ -290,7 +286,7 @@ function solve_numbers(numbers, target, show_all) {
     }
     if (use_console) {
       if (!show_all) s = [ res_best ];
-      var conclusion = "\nResults: " + no_of_same_res + ". Calculations: " + calculations + ". First time zero: " + first_zero_calculation + ".";
+      var conclusion = "\nResults: " + no_of_same_res + ". Calculations: " + calculations + ".";
       if (abs_diff)
          conclusion = "\nResults: NONE. Calculations: " + calculations + ". Found " + no_of_same_res + " equations, off by " + abs_diff;
       return s.reverse().join("\n") + conclusion;
