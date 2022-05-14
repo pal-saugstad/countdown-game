@@ -22,14 +22,12 @@ function debug_log(text) {
 //  if (use_console) console.log(text);
 }
 
-function _calc(vals) {
+function _calc(vals, show_partial) {
   vals.push('.');
   //console.log('Input to _calc ---------');
   var more = true;
+  var big_return = ''
   while (more) {
-    //var nice_print = '         _calc '
-    //for (i = 0; i < vals.length - 1 ; i++) nice_print += vals[i];
-    //console.log(nice_print);
     more = false;
     for (idx = 0; idx < vals.length-3 && !more; idx++) {
       if (!isNaN(vals[idx]) && !isNaN(vals[idx+2])) {
@@ -48,8 +46,23 @@ function _calc(vals) {
         vals[idx] = vals[idx+1]; more = true;
       }
     }
-    if (vals.length == 2 && !isNaN(vals[0])) return vals[0];
+    if (vals.length == 2 && !isNaN(vals[0])) {
+      if (show_partial) return big_return;
+      return vals[0];
+    }
     vals.splice(idx, 2);
+    if (show_partial) {
+      var nice_print = ' =  '
+      use = true;
+      for (i = 0; i < vals.length - 1 ; i++) {
+        if (vals[i] == '(') {
+          if (vals[i+2] == ')') use = false;
+        }
+        nice_print += vals[i] + (vals[i] == '(' ? '' : (vals[i+1] == ')' ? '' : ' '));
+      }
+      if (use) big_return += nice_print;
+    }
+
     }
   return "Couldn't interpret that";
 }
@@ -89,22 +102,24 @@ function calculate_formula(input, formula='') {
       }
     }
   }
-  var my_inputs = input.slice();
-  for (val of arrayed) {
-    var found = false;
-    if (isNaN(val)) continue;
-    for (i in my_inputs) {
-      if (my_inputs[i] == val) {
-        found = true;
-        my_inputs[i] = '.';
-        break;
+  if (input.length > 0) {
+    var my_inputs = input.slice();
+    for (val of arrayed) {
+      var found = false;
+      if (isNaN(val)) continue;
+      for (i in my_inputs) {
+        if (my_inputs[i] == val) {
+          found = true;
+          my_inputs[i] = '.';
+          break;
+        }
+      }
+      if (!found) {
+        return "Undefined input value in use: '" + val + "'";
       }
     }
-    if (!found) {
-      return "Undefined input value in use: '" + val + "'";
-    }
   }
-  return _calc(arrayed);
+  return _calc(arrayed, input.length == 0);
 }
 
 var got = {};
@@ -261,10 +276,10 @@ function solve_numbers(numbers, target, show_all) {
     var val = s[0];
     tab_length = s[s.length - 1].length + 3;
     s.forEach(function (value, i) {
-       s[i] = value + spaces.substring(0, tab_length - s[i].length) + '= ';
+      s[i] = value + spaces.substring(0, tab_length - s[i].length) + calculate_formula([], value);
     });
     var divider = use_console ? "   " : "\n";
-    var res_best = val + divider + "= ";
+    var res_best = val + " " + calculate_formula([], val);
     var no_of_num = 0;
     var analyze_res = val.split('');
     var prev_is_digit = false;
