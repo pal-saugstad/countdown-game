@@ -22,6 +22,12 @@ function debug_log(text) {
 //  if (use_console) console.log(text);
 }
 
+/**
+ * _calc()
+ *
+ * Calcualte the result of arrayified input string of the form
+ * ['(', '(', 38, '-', 8, ')', '+', 33, ')']
+ */
 function _calc(vals, show_partial) {
   vals.push('.');
   //console.log('Input to _calc ---------');
@@ -67,10 +73,17 @@ function _calc(vals, show_partial) {
   return "Couldn't interpret that";
 }
 
+/**
+ * calcualte_formula()
+ *
+ * Calcualte the result of input strings of the form
+ * ((38 - 8) + 33)
+ * if an input array is defined, check that only numbers found in that array is used
+ * if input array is [], write result as many reduced versions of the input formula
+ */
 function calculate_formula(input, formula='') {
-//  var calc_numbers = numbers;
+
   formula += ' ';
-  //console.log('Input is ' + formula);
   var in_number = false;
   var number = 0;
   var arrayed = [];
@@ -126,19 +139,35 @@ var got = {};
 var abs_diff;
 var calculations = 0;
 
+/**
+ * OPS basic calculation operations (+ - * /)
+ * Input: two whole positive numbers
+ * Return array:
+ * [calculated_result, operation, first_inverse_operator_input, input, input]
+ * The inverse operator of + is - and of * is /
+ * Example:
+ *  (4 + 3) has return array [7, '+', 5, 4, 3]
+ *  (4 - 3) has return array [1, '+', 4, 4, 3] since index 4 of this array should be subtracted
+ *  (4 * 3) has return array [12, '*', 5, 4, 3]
+ *  (6 / 3) has return array [2, '*', 4, 6, 3] since index 4 of this array is a divisor
+ */
 var OPS = [
+    // sum of n1 and n2
     function(n1, n2) {
       return [n1[0]+n2[0], '+', 5, n1, n2];
     },
+    // diff of the biggest and the smallest, if not zero
     function(n1, n2) {
       if (n2[0] == n1[0]) return false;
       if (n1[0] >  n2[0]) return [n1[0]-n2[0], '+', 4, n1, n2];
       return [n2[0]-n1[0], '+', 4, n2, n1];
     },
+    // n1 * n2, unless the result is the same as one of the inputs
     function(n1, n2) {
       if (n2[0] < 2 || n1[0] < 2) return false;
       return [n1[0]*n2[0], '*', 5, n2, n1];
     },
+    // the biggest divided by the smallest, if a whole number and different from both inputs
     function(n1, n2) {
       if (n2[0] < 2 || n1[0] < 2) return false;
       if (n1[0]%n2[0] == 0) return [n1[0]/n2[0], '*', 4, n1, n2];
@@ -147,6 +176,19 @@ var OPS = [
     }
 ];
 
+/**
+ * _recurse_solve_numbers()
+ *
+ * Search through all possible combinations of input values and math operations
+ * using them.
+ * The input 'numbers' consists of all the input numbers as arrays with one element each:
+ *    [[3], [4], [6], ...]
+ * However, for each recursive iteration, this array decreases in length but increases in depth:
+ *    [[7, '+', 5, [3], [4]], [6], ...]
+ * so here, the 3 and the 4 is combined to (3 + 4) as one number.
+ * While running recursively, the result collector named 'got' will be filled with possible results.
+ * If a closer match is detected, all previous results in 'got' are forgotten (and new are inserted instead)
+ */
 function _recurse_solve_numbers(numbers, searchedi, target) {
     for (var i = 0; i < numbers.length-1; i++) {
         for (var j = i+1; j < numbers.length; j++) {
@@ -178,6 +220,22 @@ function _recurse_solve_numbers(numbers, searchedi, target) {
     }
 }
 
+/**
+ * tidyup_result(): Flatten the formula stack
+ *
+ * Try include all of the same operations into a longer linear array than before
+ * Example1:
+ *     [63, '+', 5, [30, '+', 5, [14], [16]], [33]] means ((14 + 16) + 33) = 63
+ *  and will be flattened to
+ *     [63, '+', 6, [14], [16], [33]]
+ *  index 2 has value 6 since none of the indexes shall be subtracted
+ *
+ * Example2:
+ *     [63, '+', 5, [30, '+', 4, [38], [8]], [33]] means ((38 - 8) + 33) = 63
+ *  and will be flattened to
+ *     [63, '+', 5, [38], [33], [8]]
+ *  index 2 has value 5 since the [8] shall be subtracted
+ */
 function tidyup_result(result_in) {
     var children = [result_in.slice(3, result_in[2]), result_in.slice(result_in[2])];
     var result = result_in.slice(0, 3);
@@ -205,6 +263,13 @@ function tidyup_result(result_in) {
     return result;
 }
 
+/**
+ * stringify_result2(): Make a human readable output from the formula stack
+ *
+ * Example:
+ *     [63, '+', 5, [38], [33], [8, '*', 4, [32], [4]]] will be converted to
+ *     38 + 33 - (32 / 8)
+ */
 function stringify_result2(result, outer_op='+') {
 
     var alt_d = {'+': '-', '*': '/'};
