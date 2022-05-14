@@ -22,14 +22,12 @@ function debug_log(text) {
 //  if (use_console) console.log(text);
 }
 
-function _calc(vals) {
+function _calc(vals, show_partial) {
   vals.push('.');
   //console.log('Input to _calc ---------');
   var more = true;
+  var big_return = ''
   while (more) {
-    //var nice_print = '         _calc '
-    //for (i = 0; i < vals.length - 1 ; i++) nice_print += vals[i];
-    //console.log(nice_print);
     more = false;
     for (idx = 0; idx < vals.length-3 && !more; idx++) {
       if (!isNaN(vals[idx]) && !isNaN(vals[idx+2])) {
@@ -48,8 +46,23 @@ function _calc(vals) {
         vals[idx] = vals[idx+1]; more = true;
       }
     }
-    if (vals.length == 2 && !isNaN(vals[0])) return vals[0];
+    if (vals.length == 2 && !isNaN(vals[0])) {
+      if (show_partial) return big_return;
+      return vals[0];
+    }
     vals.splice(idx, 2);
+    if (show_partial) {
+      var nice_print = ' =  '
+      use = true;
+      for (i = 0; i < vals.length - 1 ; i++) {
+        if (vals[i] == '(') {
+          if (vals[i+2] == ')') use = false;
+        }
+        nice_print += vals[i] + (vals[i] == '(' ? '' : (vals[i+1] == ')' ? '' : ' '));
+      }
+      if (use) big_return += nice_print;
+    }
+
     }
   return "Couldn't interpret that";
 }
@@ -89,22 +102,24 @@ function calculate_formula(input, formula='') {
       }
     }
   }
-  var my_inputs = input.slice();
-  for (val of arrayed) {
-    var found = false;
-    if (isNaN(val)) continue;
-    for (i in my_inputs) {
-      if (my_inputs[i] == val) {
-        found = true;
-        my_inputs[i] = '.';
-        break;
+  if (input.length > 0) {
+    var my_inputs = input.slice();
+    for (val of arrayed) {
+      var found = false;
+      if (isNaN(val)) continue;
+      for (i in my_inputs) {
+        if (my_inputs[i] == val) {
+          found = true;
+          my_inputs[i] = '.';
+          break;
+        }
+      }
+      if (!found) {
+        return "Undefined input value in use: '" + val + "'";
       }
     }
-    if (!found) {
-      return "Undefined input value in use: '" + val + "'";
-    }
   }
-  return _calc(arrayed);
+  return _calc(arrayed, input.length == 0);
 }
 
 var got = {};
@@ -151,11 +166,7 @@ function _recurse_solve_numbers(numbers, searchedi, target) {
                   if (abs_diff == 0 && first_zero_calculation == -1) first_zero_calculation = calculations;
                 }
                 if (new_abs_diff == abs_diff) {
-                  since = [];
-                  var this_str = stringify_result2(tidyup_result(r));
-                  if (!got[this_str]) {
-                    got[this_str] = since.join('_ | ');
-                  }
+                  got[stringify_result2(tidyup_result(r))] = 1;
                 }
                 if (new_abs_diff == 0) break;
                 if (numbers.length > 2) {
@@ -196,42 +207,29 @@ function tidyup_result(result_in) {
     return result;
 }
 
-var since = [];
-
 function stringify_result2(result, outer_op='+') {
 
     var alt_d = {'+': '-', '*': '/'};
     var parts = [];
-    var since_parts = [];
     for (var i = 3; i < result.length; i++) {
         var child = result[i];
         var send_op = result[1];
-        var leadin = '';
         if (child.length == 1)
-              parts.push(child[0]);
-        else {
-            leadin = '_';
+            parts.push(child[0]);
+        else
             parts.push(stringify_result2(child, send_op));
-        }
-        since_parts.push(leadin + child[0]);
     }
     var opart = []; // output parts
-    var spart = []; // since parts
     var neg_split = result[2] - 3; // border index where the negative/inverted part of the equation starts
-    spart.push(since_parts.slice(0, neg_split).join(' ' + result[1]  + ' '));
     opart.push(parts.slice(0, neg_split).join(' ' + result[1]  + ' '));
-    var neg_spart = since_parts.slice(neg_split);
     var neg_opart = parts.slice(neg_split);
 
     if (neg_opart.length > 1 && result[1] == '*') {
-      spart.push('(' + neg_spart.join(' ' + result[1]  + ' ') + ')');
       opart.push('(' + neg_opart.join(' ' + result[1]  + ' ') + ')');
     } else if (neg_opart.length > 0) {
-      spart.push(neg_spart.join(' ' + alt_d[result[1]] + ' '));
       opart.push(neg_opart.join(' ' + alt_d[result[1]] + ' '));
     }
 
-    since.push(spart.join(' ' + alt_d[result[1]] + ' ') + ' = ' + result[0]);
     var txt = opart.join(' ' + alt_d[result[1]] + ' ');
 
     if (outer_op != '+' && result[1] != '*') {
@@ -278,10 +276,9 @@ function solve_numbers(numbers, target, show_all) {
     var val = s[0];
     tab_length = s[s.length - 1].length + 3;
     s.forEach(function (value, i) {
-       s[i] = value + spaces.substring(0, tab_length - s[i].length) + 'since: '+ got[value];
+      s[i] = value + spaces.substring(0, tab_length - s[i].length) + calculate_formula([], value);
     });
-    var divider = use_console ? "   " : "\n";
-    var res_best = val + divider + "since: " + got[val];
+    var res_best = val + "\n\n" + calculate_formula([], val);
     var no_of_num = 0;
     var analyze_res = val.split('');
     var prev_is_digit = false;
@@ -303,6 +300,7 @@ function solve_numbers(numbers, target, show_all) {
         ret_val = '<div>NO results. Found ' + no_of_same_res + ' equations which are Off by ' + abs_diff + '</div>';
       else
         ret_val = '<div>Found ' + no_of_same_res + ' equations. The best result is using ' + no_of_num + ' input values</div>';
+      ret_val +=  '<div>&nbsp;</div>'
       ret_val +=  '<div class="res_best">' + res_best + '</div>' +
                   '<div class="res_all">' + s.join("\n") + '</div>';
       return ret_val;
