@@ -58,13 +58,16 @@ function _calc(vals, show_partial) {
     }
     vals.splice(idx, 2);
     if (show_partial) {
-      var nice_print = ' =  '
-      use = true;
+      var nice_print = '  =  ';
+      var use = true;
+      var gap = '';
       for (i = 0; i < vals.length - 1 ; i++) {
         if (vals[i] == '(') {
           if (vals[i+2] == ')') use = false;
         }
-        nice_print += vals[i] + (vals[i] == '(' ? '' : (vals[i+1] == ')' ? '' : ' '));
+        if (vals[i] == ')') gap = '';
+        nice_print += gap + vals[i];
+        gap = vals[i] == '(' ? '' : ' ';
       }
       if (use) big_return += nice_print;
     }
