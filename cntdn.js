@@ -141,15 +141,16 @@ var calculations = 0;
 
 /**
  * OPS basic calculation operations (+ - * /)
- * Input: two whole positive numbers
+ * Input: two arrays: Either one number or a number formula like the output in each array
  * Return array:
  * [calculated_result, operation, first_inverse_operator_input, input, input]
  * The inverse operator of + is - and of * is /
  * Example:
- *  (4 + 3) has return array [7, '+', 5, 4, 3]
- *  (4 - 3) has return array [1, '+', 4, 4, 3] since index 4 of this array should be subtracted
- *  (4 * 3) has return array [12, '*', 5, 4, 3]
- *  (6 / 3) has return array [2, '*', 4, 6, 3] since index 4 of this array is a divisor
+ *  sum  of [4] and [3, '+', 5, [1], [2]]
+                        has return array [7, '+', 5, [4], [3, '+', 5, [1], [2]]]
+ *  diff of [4] and [3] has return array [1, '+', 4, [4], [3]] since index 4 of this array should be subtracted
+ *  mult of [4] and [3] has return array [12, '*', 5, [4], [3]]
+ *  div  of [3] and [6] has return array [2, '*', 4, [6], [3]] since index 4 of this array is a divisor
  */
 var OPS = [
     // sum of n1 and n2
@@ -185,7 +186,7 @@ var OPS = [
  *    [[3], [4], [6], ...]
  * However, for each recursive iteration, this array decreases in length but increases in depth:
  *    [[7, '+', 5, [3], [4]], [6], ...]
- * so here, the 3 and the 4 is combined to (3 + 4) as one number.
+ * so here, the 3 and the 4 are combined to (3 + 4) as one number.
  * While running recursively, the result collector named 'got' will be filled with possible results.
  * If a closer match is detected, all previous results in 'got' are forgotten (and new are inserted instead)
  */
@@ -268,7 +269,7 @@ function tidyup_result(result_in) {
  *
  * Example:
  *     [63, '+', 5, [38], [33], [8, '*', 4, [32], [4]]] will be converted to
- *     38 + 33 - (32 / 8)
+ *     38 + 33 - 32 / 4
  */
 function stringify_result2(result, outer_op='+') {
 
