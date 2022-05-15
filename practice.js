@@ -99,17 +99,23 @@ function seedform(evt) {
     evt.preventDefault();
     var istring = $('#seed').val().toUpperCase();
     if (window.location.hash == '#numbers') {
-      var inputs = istring.split(' ');
+      var inputs = istring.trim().split(' ');
+      var bad_input = false;
       if (inputs.length == 7) {
         for (i in inputs) {
-          if (isNaN(inputs[i])) inputs[i] = '0';
+          if (isNaN(inputs[i])) inputs[i] = 0;
+          if (inputs[i] < 1) bad_input = true;
         }
+      } else {
+        bad_input = true;
+      }
+      if (bad_input) {
+        $('#answer').text("Wrong input format - '" + istring + "'" +
+                         "\nFormat: 7 positive numbers where the latter is the target" +
+                         "\nExample: '25 75 7 11 13 3 563'");
+      } else {
         var targ = inputs.pop();
         defined_numbers(inputs, targ);
-      } else {
-        $('#answer').text("Wrong input format - '" + istring + "'" +
-                         "\nFormat: 7 numbers where the latter is the target" +
-                         "\nExample: '25 75 7 11 13 3 563'");
       }
     } else {
       seed = istring;
