@@ -53,6 +53,7 @@ function _calc(vals, show_partial) {
       }
     }
     if (vals.length == 2 && !isNaN(vals[0])) {
+      if (!big_return) big_return = "  =  " + vals[0];
       if (show_partial) return big_return;
       return vals[0];
     }
@@ -71,8 +72,7 @@ function _calc(vals, show_partial) {
       }
       if (use) big_return += nice_print;
     }
-
-    }
+  }
   return "Couldn't interpret that";
 }
 
@@ -320,7 +320,7 @@ function solve_numbers(numbers, target, show_all) {
           abs_diff = new_abs_diff;
         }
         if (new_abs_diff == abs_diff) {
-          got[val.toString()] = val + ' = ' + val;
+          got[val.toString()] = 1;
         }
     }
 
