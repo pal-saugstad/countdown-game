@@ -344,20 +344,13 @@ function autofill() {
 }
 
 function conundrum() {
-    var data = generate_conundrum();
+    [data, conundrum_result]  = generate_conundrum();
     reset();
-    result = [];
-    solve_letters(data.toLowerCase(), function(word) { if (word.length == 9) result.push(word); });
-    if (result.length == 1) {
-        conundrum_result = result[0];
-        conundrum_clue = ".........".split('');
-        seed = data.toUpperCase();
-        is_conundrum = true;
-        autofill();
-        $('#conundrum-clue').css('visibility', 'visible');
-    } else {
-        conundrum();
-    }
+    conundrum_clue = ".........".split('');
+    seed = data.toUpperCase();
+    is_conundrum = true;
+    autofill();
+    $('#conundrum-clue').css('visibility', 'visible');
 }
 
 function show_conundrum_clue() {
