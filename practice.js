@@ -616,9 +616,6 @@ function reset_all() {
 }
 
 function showlettersanswer() {
-    if (clocksecs > 0)
-        stopclock();
-
     if (is_conundrum) {
         $('#answer').html(conundrum_result);
         best = conundrum_result.toUpperCase();
@@ -628,13 +625,9 @@ function showlettersanswer() {
     } else {
         $('#answer').html(solve_letters_matrix(letters));
     }
-    check_best_result();
 }
 
 function shownumbersanswer() {
-    if (clocksecs > 0)
-        stopclock();
-
     var numbers = [];
     var target = $('#numbers-target').html();
 
@@ -642,15 +635,18 @@ function shownumbersanswer() {
         numbers.push(parseInt($('#number' + i).html()));
 
     $('#answer').html(solve_numbers(numbers, target, false));
-    check_best_result();
 }
 
 function showanswer() {
+  if (clocksecs > 0)
+      stopclock();
+
   if (window.location.hash == '#numbers') {
     shownumbersanswer();
   } else {
     showlettersanswer();
   }
+  check_best_result();
 }
 
 $('#suggest-solution').submit(checksolution);
