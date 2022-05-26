@@ -616,86 +616,18 @@ function reset_all() {
 }
 
 function showlettersanswer() {
-    if (clocksecs > 0)
-        stopclock();
-
-    var result = [];
-    var res = [];
-
-    solve_letters(letters.toLowerCase(), function(word, c) { result.push([word, c]); });
-
-    result.sort(function(a, b) {
-      return a > b;
-    });
-
-    var out_matrix = [[],[],[],[],[],[],[],[],[],[]];
-    var no_of_words = [0,0,0,0,0 ,0,0,0,0,0];
-    var max_word_length = 0;
-    for (value of result) {
-      no_of_words[value[0].length] += 1;
-      out_matrix[value[0].length].push(value[0]);
-    }
-    for (i = 9; i > 0; i--) {
-      if (no_of_words[i] > 0) {
-        max_word_length = i;
-        break;
-      }
-    }
-
-    var spaces = '                                                                        ';
-
-    var stats_best = '<div>Found '
-          + result.length
-          + ' words of which '
-          + no_of_words[max_word_length]
-          + ' words have '
-          + max_word_length
-          + ' letters\n\n</div>'
-          + '<div class="res_best">';
-    for (i = 0; i < no_of_words[max_word_length]; i ++ ) {
-      stats_best += out_matrix[max_word_length][i] + " ";
-    }
-    stats_best += '</div><div class="res_all">1    2    3      4      5        6        7          8          9';
-    res.push(stats_best);
-    var row = 'init';
-    for (i = 0; row.length > 0; i++) {
-      row = '';
-      var blanks = 0;
-      for (j = 1; j <= 9; j++) {
-        if (out_matrix[j].length > i) {
-          row += spaces.substring(0,blanks) + out_matrix[j][i];
-          blanks = 3;
-        } else {
-          blanks += j + 3;
-        }
-      }
-      res.push(row);
-    }
-    res.push('</div>');
-
     if (is_conundrum) {
-        r = [];
-        for (var i = 0; i < result.length; i++)
-            if (result[i][0].length == 9)
-                r.push(result[i]);
-        result = r;
-        $('#answer').html(result.map(function(a) { return a[0]; }).join("\n"));
+        $('#answer').html(conundrum_result);
+        best = conundrum_result.toUpperCase();
+        if (best.length >= 9)
+            for (var i = 0; i < 9; i++)
+                $('#letter' + (i+1)).html(best.charAt(i));
     } else {
-        $('#answer').html(res.join("\n"));
+        $('#answer').html(solve_letters_matrix(letters));
     }
-    var best = result.length ? result[0][0].toUpperCase() : '';
-    if (best.length == 9) {
-        best += '         ';
-        for (var i = 0; i < 9; i++)
-            $('#letter' + (i+1)).html(best.charAt(i));
-    }
-    check_best_result();
 }
 
 function shownumbersanswer() {
-    if (clocksecs > 0)
-        stopclock();
-
     var numbers = [];
     var target = $('#numbers-target').html();
 
@@ -703,15 +635,18 @@ function shownumbersanswer() {
         numbers.push(parseInt($('#number' + i).html()));
 
     $('#answer').html(solve_numbers(numbers, target, false));
-    check_best_result();
 }
 
 function showanswer() {
+  if (clocksecs > 0)
+      stopclock();
+
   if (window.location.hash == '#numbers') {
     shownumbersanswer();
   } else {
     showlettersanswer();
   }
+  check_best_result();
 }
 
 $('#suggest-solution').submit(checksolution);

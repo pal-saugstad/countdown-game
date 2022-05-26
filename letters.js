@@ -70,3 +70,61 @@ function word_in_dictionary(word) {
         return false;
     return true;
 }
+
+function solve_letters_matrix(letters) {
+
+  var result = [];
+  var res = [];
+
+  solve_letters(letters.toLowerCase(), function(word, c) { result.push([word, c]); });
+
+  result.sort(function(a, b) {
+    return a > b;
+  });
+
+  var out_matrix = [[],[],[],[],[],[],[],[],[],[]];
+  var no_of_words = [0,0,0,0,0 ,0,0,0,0,0];
+  var max_word_length = 0;
+  for (value of result) {
+    no_of_words[value[0].length] += 1;
+    out_matrix[value[0].length].push(value[0]);
+  }
+  for (i = 9; i > 0; i--) {
+    if (no_of_words[i] > 0) {
+      max_word_length = i;
+      break;
+    }
+  }
+
+  var spaces = '                                                                        ';
+
+  var stats_best = '<div>Found '
+        + result.length
+        + ' words of which '
+        + no_of_words[max_word_length]
+        + ' words have '
+        + max_word_length
+        + ' letters\n</div>'
+        + '<div class="res_best">\n';
+  for (i = 0; i < no_of_words[max_word_length]; i ++ ) {
+    stats_best += out_matrix[max_word_length][i] + " ";
+  }
+  stats_best += '</div><div class="res_all">\n1    2    3      4      5        6        7          8          9';
+  res.push(stats_best);
+  var row = 'init';
+  for (i = 0; row.length > 0; i++) {
+    row = '';
+    var blanks = 0;
+    for (j = 1; j <= 9; j++) {
+      if (out_matrix[j].length > i) {
+        row += spaces.substring(0,blanks) + out_matrix[j][i];
+        blanks = 3;
+      } else {
+        blanks += j + 3;
+      }
+    }
+    res.push(row);
+  }
+  res.push('</div>');
+  return res.join('\n');
+}
