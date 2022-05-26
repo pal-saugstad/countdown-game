@@ -12,7 +12,7 @@ if (input) {
   }
   console.debug("Solve Letters for input '" + clean_letters + "'");
 
-  const context = { input_letters: clean_letters};
+  const context = { input_letters: clean_letters, dbg: []};
   vm.createContext(context);
 
   const files = ['dictionary.js', 'letters.js']
@@ -22,6 +22,10 @@ if (input) {
 
   vm.runInContext(code, context);
   console.debug(context.outp);
+  if (context.dbg.length) {
+    console.debug("\n---------------------------------\ndebug output via dbg.push('text')\n---------------------------------\n");
+    console.debug(context.dbg.join('\n'));
+  }
 } else {
   console.debug("Give me letters");
 }

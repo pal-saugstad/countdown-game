@@ -6,6 +6,7 @@
  */
 
 // First part of original cntdn.js file
+var dbg = [];
 
 function _recurse_solve_letters(letters, node, used_letter, cb, answer) {
     if (node[0])
