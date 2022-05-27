@@ -19,8 +19,9 @@ if (typeof(in_vm) === 'undefined') {
 
   // code to run in vm as the last "included" file (see readFileSync above)
   let start = new Date().getTime();
+  let times = 1;
   if (input_args[2]) {
-    let times = input_args[2];
+    times = input_args[2];
     if (isNaN(times)) times = 1;
     console.log("Show " + times + " conundrums");
     for (i = 0; i < times; i++) console.log(generate_conundrum());
@@ -29,5 +30,8 @@ if (typeof(in_vm) === 'undefined') {
     console.log(generate_conundrum());
   }
   let stop = new Date().getTime();
-  console.log('Duration: ' + (stop - start) + ' ms');
+  if (times > 1) {
+    let duration_per_iteration = (stop - start) / times;
+    console.log('Duration: ' + (stop - start) + ' ms, ' + duration_per_iteration.toFixed(1) + ' ms per iteration, ' + times + ' iterations');
+  } else console.log('Duration: ' + (stop - start) + ' ms');
 }
