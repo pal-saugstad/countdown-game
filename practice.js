@@ -45,6 +45,7 @@ var letters;
 var needreset;
 var best_result = true;
 var seed = '';
+var seed_input = '';
 $('#vowel-button').click(function() {
     addletter(true);
 });
@@ -97,7 +98,7 @@ $('#best-result').change(function() {
 $('#seed-form').submit(seedform);
 function seedform(evt) {
     evt.preventDefault();
-    var istring = $('#seed').val().toUpperCase();
+    var istring = $('#seed').val().toLowerCase();
     if (window.location.hash == '#numbers') {
       var inputs = istring.trim().split(' ');
       var bad_input = false;
@@ -119,6 +120,7 @@ function seedform(evt) {
       }
     } else {
       seed = istring;
+      seed_input = seed;
       autofill();
     }
 }
@@ -317,7 +319,7 @@ function autofill() {
     if (letteridx <= 9) {
         var letter = '';
         while (seed.length) {
-            var test_letter = seed.substring(0,1);
+            var test_letter = seed.substring(0,1).toUpperCase();
             seed = seed.substring(1);
             if (test_letter >= 'A' && test_letter <= 'Z') {
                 letter = test_letter;
@@ -347,7 +349,8 @@ function conundrum() {
     [data, conundrum_result]  = generate_conundrum();
     reset();
     conundrum_clue = ".........".split('');
-    seed = data.toUpperCase();
+    seed = data;
+    seed_input = seed;
     is_conundrum = true;
     autofill();
     $('#conundrum-clue').css('visibility', 'visible');
@@ -610,7 +613,7 @@ function reset_all() {
 
 function showlettersanswer() {
     if (is_conundrum) {
-        $('#answer').html(conundrum_result);
+        $('#answer').html(seed_input + ' -> ' + conundrum_result);
         best = conundrum_result.toUpperCase();
         if (best.length >= 9)
             for (var i = 0; i < 9; i++)
