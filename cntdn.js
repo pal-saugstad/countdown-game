@@ -16,12 +16,6 @@
  The effect of that is that the variable 'use_console' becomes false (see below).
  */
 
-var use_console = (typeof(run_from_browser) === 'undefined');
-
-function debug_log(text) {
-//  if (use_console) console.log(text);
-}
-
 /**
  * _calc()
  *
@@ -353,56 +347,12 @@ function solve_numbers(numbers, target, show_all) {
       if (is_digit && !prev_is_digit) no_of_num++;
       prev_is_digit = is_digit;
     }
-    if (use_console) {
-      if (!show_all) s = [ res_best ];
-      var conclusion = "\nResults: " + no_of_same_res + ". Calculations: " + calculations + ".";
-      if (abs_diff)
-         conclusion = "\nResults: NONE. Calculations: " + calculations + ". Found " + no_of_same_res + " equations, off by " + abs_diff;
-      return s.reverse().join("\n") + conclusion;
-    } else {
-      var ret_val = '';
-      if (abs_diff)
-        ret_val = '<div>NO results. Found ' + no_of_same_res + ' equations which are Off by ' + abs_diff + '</div>';
-      else
-        ret_val = '<div>Found ' + no_of_same_res + ' equations. The best result is using ' + no_of_num + ' input values</div>';
-      ret_val +=  '<div>&nbsp;</div>'
-      ret_val +=  '<div class="res_best">' + res_best + '</div>' +
-                  '<div class="res_all">' + s.join("\n") + '</div>';
-      return ret_val;
-    }
-}
-
-if (use_console) {
-  input = [0,0,'-h',1,1,1,1,1,1,0];
-  for (n in process.argv) if (n < 10) input[n] = parseInt(process.argv[n]);
-  var show_all = input.pop();
-  var target = input.pop();
-  input.shift();
-  input.shift();
-  var help = input[0] == '-h';
-  if (!help) {
-    for (val of input) {
-      if (isNaN(val)) {
-        help = true;
-        console.log("\nCheck input syntax!")
-      } else if (val < 0) {
-        help = true;
-        console.log("\nNegative number not allowed");
-      }
-    }
-  }
-  if (help) {
-    console.log("\nCountdown Solver\n");
-    console.log("First six parameters: Input values");
-    console.log("Seventh parameter:    Target value");
-    console.log("Eight parameter:      If 0 or absent: Show best solution, if 1: Show all solutions");
-
-  } else {
-    console.time('Time');
-    console.log('');
-    console.log(solve_numbers(input, target, show_all == 1));
-    console.log('Input:', input, ', Target:', [target], ', Show:', [show_all == 1 ? 'All results' : 'Best result' ]);
-    console.timeEnd('Time');
-    console.log('');
-  }
+    var ret_val = '';
+    if (abs_diff)
+      ret_val = '<div>NO results. Found ' + no_of_same_res + ' equations which are Off by ' + abs_diff + '</div>';
+    else
+      ret_val = '<div>Found ' + no_of_same_res + ' equations. The best result is using ' + no_of_num + ' input values</div>';
+    ret_val +=  '<div class="res_best">\n' + res_best + '</div>' +
+                '<div class="res_all">\n' + s.join("\n") + '</div>';
+    return ret_val;
 }
