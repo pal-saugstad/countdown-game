@@ -1,27 +1,39 @@
 
-function _recurse_find_9letter_words(node, cb, answer) {
-    if (node[0] && answer.length == 9) {
-          cb(answer);
-          return;
-    }
-
-    for (c in node) {
-        _recurse_find_9letter_words(node[c], cb, answer+c);
-    }
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
 }
 
+let nine_letters_found = false;
 
-function find_9letter_words() {
-  let result = [];
-  _recurse_find_9letter_words(dictionary, function(word) { result.push(word); }, '');
+function _recurse_find_9letter_word(node, cb, answer) {
+  if (node[0] && answer.length == 9) {
+    nine_letters_found = true;
+    cb(answer);
+    return;
+  }
+
+  if (!nine_letters_found) {
+    let carr = [];
+    for (c in node) carr.push(c);
+    shuffle(carr);
+    for (c of carr) _recurse_find_9letter_word(node[c], cb, answer+c);
+  }
+}
+
+function find_9letter_random_word() {
+  let result = '';
+  nine_letters_found = false;
+  _recurse_find_9letter_word(dictionary, function(word) { result = word; }, '');
   return result;
 }
 
 function generate_conundrum() {
 
-  const long_words = find_9letter_words();
   while (true) {
-    const letters = long_words[Math.floor(Math.random() * long_words.length)];
+    const letters = find_9letter_random_word();
     const five = [];
     const nine = [];
 
