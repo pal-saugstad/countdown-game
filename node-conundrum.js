@@ -24,7 +24,7 @@ if (typeof(in_vm) === 'undefined') {
     times = input_args[2];
     if (isNaN(times)) times = 1;
     console.log("Show " + times + " conundrums");
-    for (i = 0; i < times; i++) console.log(generate_conundrum());
+    for (let i = 0; i < times; i++) console.log(generate_conundrum());
   } else {
     console.log("Show just one conundrums since no spesific number was given");
     console.log(generate_conundrum());
