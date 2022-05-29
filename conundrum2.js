@@ -37,7 +37,7 @@ function generate_conundrum() {
     const five = [];
     const nine = [];
 
-    solve_letters(letters, function(word, c) {
+    solve_letters(letters, function(word) {
       if (word.length == 5) five.push(word);
       else if (word.length == 9) nine.push(word);
     });
@@ -65,7 +65,7 @@ function generate_conundrum() {
       if (elim[i] == 0) four_word_input += letters.charAt(i);
     }
     let four_solve = [];
-    solve_letters(four_word_input, function(word, c) {
+    solve_letters(four_word_input, function(word) {
       if (word.length == 4) four_solve.push(word);
     });
     if (four_solve.length < 1) {

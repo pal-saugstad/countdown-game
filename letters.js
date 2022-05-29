@@ -6,63 +6,55 @@
  */
 
 // First part of original cntdn.js file
-var dbg = [];
 
-function _recurse_solve_letters(letters, node, used_letter, cb, answer) {
-    if (node[0])
-        cb(answer, node[0]);
+function solve_letters(letters, cb) {
+  const length = letters.length;
+  const la = letters.split('');
+  let used = {};
+  let answer = '';
 
-    if (answer.length == letters.length)
-        return;
+  function _recurse(node) {
 
-    var done = {};
+    if (node[0]) cb(answer);
 
-    for (var i = 0; i < letters.length; i++) {
-        var c = letters.charAt(i);
+    if (answer.length < length) {
+      let done = {0: true};
 
-        if (used_letter[i] || done[c])
-            continue;
-
-        if (node[c]) {
-            used_letter[i] = true;
-            done[c] = true;
-            _recurse_solve_letters(letters, node[c], used_letter, cb, answer+c);
-            used_letter[i] = false;
+      for (const [i, c] of la.entries()) {
+        if (used[i] || done[c] || !node[c]) continue;
+        used[i] = done[c] = true;
+        let prev = answer;
+        answer += c;
+        _recurse(node[c]);
+        used[i] = false;
+        answer = prev;
         }
     }
 }
 
-function solve_letters(letters, cb) {
-    _recurse_solve_letters(letters, dictionary, {}, cb, '');
+  _recurse(dictionary);
 }
 
 function sufficient_letters(word, letters) {
-    var count = {};
 
-    for (var i = 0; i < letters.length; i++) {
-        if (!count[letters.charAt(i)])
-            count[letters.charAt(i)] = 0;
-        count[letters.charAt(i)]++;
-    }
+    let la = letters.split('').sort();
 
-    for (var i = 0; i < word.length; i++) {
-        if (!count[word.charAt(i)])
-            return false;
-        count[word.charAt(i)]--;
-        if (count[word.charAt(i)] < 0)
-            return false;
+    for (const c of word.split('').sort()) {
+        let found;
+        do {
+          if (la.length == 0) return false;
+          found = (c == la[0]);
+          la.shift();
+        } while (!found);
     }
 
     return true;
 }
 
 function word_in_dictionary(word) {
-    var node = dictionary;
-    var idx = 0;
-
-    while (idx < word.length) {
-        node = node[word.charAt(idx)];
-        idx++;
+    let node = dictionary;
+    for (c of word.split('')) {
+        node = node[c];
         if (!node)
             return false;
     }
@@ -77,18 +69,16 @@ function solve_letters_matrix(letters) {
   var result = [];
   var res = [];
 
-  solve_letters(letters.toLowerCase(), function(word, c) { result.push([word, c]); });
+  solve_letters(letters.toLowerCase(), function(word) { result.push(word); });
 
-  result.sort(function(a, b) {
-    return a > b;
-  });
+  result.sort();
 
   var out_matrix = [[],[],[],[],[],[],[],[],[],[]];
   var no_of_words = [0,0,0,0,0 ,0,0,0,0,0];
   var max_word_length = 0;
   for (value of result) {
-    no_of_words[value[0].length] += 1;
-    out_matrix[value[0].length].push(value[0]);
+    no_of_words[value.length] += 1;
+    out_matrix[value.length].push(value);
   }
   for (i = 9; i > 0; i--) {
     if (no_of_words[i] > 0) {
