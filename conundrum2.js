@@ -6,34 +6,24 @@ function shuffle(array) {
   }
 }
 
-let nine_letters_found = false;
-
-function _recurse_find_9letter_word(node, cb, answer) {
-  if (node[0] && answer.length == 9) {
-    nine_letters_found = true;
-    cb(answer);
-    return;
+function* give_words(size=3, skip=0) {
+  function* _give(node, answer) {
+    if (answer.length < size) {
+      for (c in node) yield * _give(node[c], answer+c);
+    } else if (node[0]) {
+      if (skip > 0) skip--;
+      else skip = yield answer;
+    }
   }
-
-  if (!nine_letters_found) {
-    let carr = [];
-    for (c in node) carr.push(c);
-    shuffle(carr);
-    for (c of carr) _recurse_find_9letter_word(node[c], cb, answer+c);
-  }
+  while (true) yield * _give(dictionary, '');
 }
 
-function find_9letter_random_word() {
-  let result = '';
-  nine_letters_found = false;
-  _recurse_find_9letter_word(dictionary, function(word) { result = word; }, '');
-  return result;
-}
-
-function generate_conundrum() {
-
+function generate_conundrum(input = '') {
+  let skip = Math.floor(Math.random() * 19000);
+  let words = give_words(9, skip);
   while (true) {
-    const letters = find_9letter_random_word();
+    skip = Math.floor(Math.random() * 10);
+    const letters = input ? input : words.next(skip).value;
     const five = [];
     const nine = [];
 
@@ -41,43 +31,38 @@ function generate_conundrum() {
       if (word.length == 5) five.push(word);
       else if (word.length == 9) nine.push(word);
     });
-    if (nine.length != 1) {
-      console.log("Redo since several 9 letter permutations " + nine);
-      continue;
-    }
-    if (five.length < 1) {
-      console.log("Redo since no word with five letters found ");
-      continue;
-    }
-    const five_word = five[Math.floor(Math.random() * five.length)];
-    let elim = [0,0,0,0,0,0,0,0,0];
-    for (i = 0; i < 5; i++) {
-      target = five_word.charAt(i);
-      for (j = 0; j < 9; j++) {
-        if (letters.charAt(j) == target && elim[j] == 0) {
-          elim[j] = 1;
-          break;
+    shuffle(nine);
+    shuffle(five);
+    const nine_sorted = nine[0].split('').sort();
+    for (const five_word of five) {
+      let five_sorted = five_word.split('').sort();
+      let four_sorted = nine_sorted.slice();
+      let i = 0;
+      for (let c of five_sorted) {
+        while (c != four_sorted[i]) {
+          i++;
+          if (!four_sorted[i]) thow();
+        }
+        four_sorted[i] = '';
+      }
+      let four_word_input = four_sorted.join('');
+      let four_solve = [];
+      solve_letters(four_word_input, function(word) {
+        if (word.length == 4) four_solve.push(word);
+      });
+      shuffle(four_solve);
+      for (const four_word of four_solve) {
+        let check_words = {};
+        for (const word9 of nine) {
+          check_words[word9.substring(0,4)] = true;
+          check_words[word9.substring(5,9)] = true;
+        }
+
+        if (!check_words[four_word] && !check_words[five_word.substring(0,4)] && !check_words[five_word.substring(1,5)]) {
+          nine.unshift(Math.random() > 0.5 ? five_word + four_word : four_word + five_word);
+          return nine;
         }
       }
     }
-    let four_word_input = '';
-    for (i = 0; i < 9; i++) {
-      if (elim[i] == 0) four_word_input += letters.charAt(i);
-    }
-    let four_solve = [];
-    solve_letters(four_word_input, function(word) {
-      if (word.length == 4) four_solve.push(word);
-    });
-    if (four_solve.length < 1) {
-      console.log("Redo since no word with four letters found ");
-      continue;
-    }
-    const four_word = four_solve[Math.floor(Math.random() * four_solve.length)];
-    if (letters == four_word + five_word || letters == five_word + four_word) {
-      console.log("Redo since too easy >>>>>>>>>>>>>>>>> " + [four_word, five_word, letters]);
-      continue;
-    }
-    const question = Math.random() > 0.5 ? five_word + four_word : four_word + five_word;
-    return [ question, letters ];
   }
 }
