@@ -9,6 +9,7 @@ if (typeof(in_vm) === 'undefined') {
 
   const code = 'var in_vm = true;\n' +
     fs.readFileSync('dictionary.js',      'utf-8') +
+    fs.readFileSync('dictionary-stats.js','utf-8') +
     fs.readFileSync('letters.js',         'utf-8') +
     fs.readFileSync('conundrum2.js',      'utf-8') +
     fs.readFileSync( process.argv[1],     'utf-8');

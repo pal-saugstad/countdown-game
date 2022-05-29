@@ -19,7 +19,7 @@ function* give_words(size=3, skip=0) {
 }
 
 function generate_conundrum(input = '') {
-  let skip = Math.floor(Math.random() * 19000);
+  let skip = Math.floor(Math.random() * dictionary_word_lengths[9]);
   let words = give_words(9, skip);
   while (true) {
     skip = Math.floor(Math.random() * 10);
