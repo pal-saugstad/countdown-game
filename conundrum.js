@@ -21,10 +21,13 @@ function generate_conundrum() {
             }
 
             if (words.length == 1) {
+                let result = [];
+                solve_letters(letters, function(word) { if (word.length == 9) result.push(word); });
+                if (result.length != 1) continue
                 if (Math.random() < 0.5) {
-                    return w1+w2;
+                    return [w1+w2, result[0]];
                 } else {
-                    return w2+w1;
+                    return [w2+w1, result[0]];
                 }
             }
         }
@@ -41,8 +44,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 // Compute the edit distance between the two given strings
 function levenshtein(a,b) {
-  if(a.length == 0) return b.length; 
-  if(b.length == 0) return a.length; 
+  if(a.length == 0) return b.length;
+  if(b.length == 0) return a.length;
 
   var matrix = [];
 

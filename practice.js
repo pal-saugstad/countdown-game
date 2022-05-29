@@ -28,7 +28,7 @@ var numbersteps;
 var numbertimeout;
 
 var is_conundrum;
-var conundrum_result;
+var conundrum_result = [];
 var conundrum_clue;
 var letteridx;
 var clockinterval;
@@ -45,6 +45,7 @@ var letters;
 var needreset;
 var best_result = true;
 var seed = '';
+var seed_input = '';
 $('#vowel-button').click(function() {
     addletter(true);
 });
@@ -97,7 +98,7 @@ $('#best-result').change(function() {
 $('#seed-form').submit(seedform);
 function seedform(evt) {
     evt.preventDefault();
-    var istring = $('#seed').val().toUpperCase();
+    var istring = $('#seed').val().toLowerCase();
     if (window.location.hash == '#numbers') {
       var inputs = istring.trim().split(' ');
       var bad_input = false;
@@ -119,6 +120,7 @@ function seedform(evt) {
       }
     } else {
       seed = istring;
+      seed_input = seed;
       autofill();
     }
 }
@@ -317,7 +319,7 @@ function autofill() {
     if (letteridx <= 9) {
         var letter = '';
         while (seed.length) {
-            var test_letter = seed.substring(0,1);
+            var test_letter = seed.substring(0,1).toUpperCase();
             seed = seed.substring(1);
             if (test_letter >= 'A' && test_letter <= 'Z') {
                 letter = test_letter;
@@ -344,20 +346,15 @@ function autofill() {
 }
 
 function conundrum() {
-    var data = generate_conundrum();
+    let returned_data  = generate_conundrum();
     reset();
-    result = [];
-    solve_letters(data.toLowerCase(), function(word) { if (word.length == 9) result.push(word); });
-    if (result.length == 1) {
-        conundrum_result = result[0];
-        conundrum_clue = ".........".split('');
-        seed = data.toUpperCase();
-        is_conundrum = true;
-        autofill();
-        $('#conundrum-clue').css('visibility', 'visible');
-    } else {
-        conundrum();
-    }
+    conundrum_clue = ".........".split('');
+    seed = returned_data.shift();
+    seed_input = seed;
+    conundrum_result = returned_data;
+    is_conundrum = true;
+    autofill();
+    $('#conundrum-clue').css('visibility', 'visible');
 }
 
 function show_conundrum_clue() {
@@ -368,7 +365,7 @@ function show_conundrum_clue() {
     }
     if (stillneed.length > 0) {
         let reveal_idx = stillneed[Math.floor(Math.random() * stillneed.length)];
-        conundrum_clue[reveal_idx] = conundrum_result.charAt(reveal_idx);
+        conundrum_clue[reveal_idx] = conundrum_result[0].charAt(reveal_idx);
     }
     $('#answer').text(conundrum_clue.join(''));
 }
@@ -617,8 +614,8 @@ function reset_all() {
 
 function showlettersanswer() {
     if (is_conundrum) {
-        $('#answer').html(conundrum_result);
-        best = conundrum_result.toUpperCase();
+        $('#answer').html(seed_input + ' -> ' + conundrum_result.join(' or '));
+        best = conundrum_result[0].toUpperCase();
         if (best.length >= 9)
             for (var i = 0; i < 9; i++)
                 $('#letter' + (i+1)).html(best.charAt(i));
