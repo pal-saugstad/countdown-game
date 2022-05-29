@@ -28,7 +28,7 @@ var numbersteps;
 var numbertimeout;
 
 var is_conundrum;
-var conundrum_result;
+var conundrum_result = [];
 var conundrum_clue;
 var letteridx;
 var clockinterval;
@@ -346,11 +346,12 @@ function autofill() {
 }
 
 function conundrum() {
-    [data, conundrum_result]  = generate_conundrum();
+    let returned_data  = generate_conundrum();
     reset();
     conundrum_clue = ".........".split('');
-    seed = data;
+    seed = returned_data.shift();
     seed_input = seed;
+    conundrum_result = returned_data;
     is_conundrum = true;
     autofill();
     $('#conundrum-clue').css('visibility', 'visible');
@@ -364,7 +365,7 @@ function show_conundrum_clue() {
     }
     if (stillneed.length > 0) {
         let reveal_idx = stillneed[Math.floor(Math.random() * stillneed.length)];
-        conundrum_clue[reveal_idx] = conundrum_result.charAt(reveal_idx);
+        conundrum_clue[reveal_idx] = conundrum_result[0].charAt(reveal_idx);
     }
     $('#answer').text(conundrum_clue.join(''));
 }
@@ -613,8 +614,8 @@ function reset_all() {
 
 function showlettersanswer() {
     if (is_conundrum) {
-        $('#answer').html(seed_input + ' -> ' + conundrum_result);
-        best = conundrum_result.toUpperCase();
+        $('#answer').html(seed_input + ' -> ' + conundrum_result.join(' or '));
+        best = conundrum_result[0].toUpperCase();
         if (best.length >= 9)
             for (var i = 0; i < 9; i++)
                 $('#letter' + (i+1)).html(best.charAt(i));
