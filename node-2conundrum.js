@@ -64,6 +64,33 @@ if (typeof(in_vm) === 'undefined') {
     console.log("const dictionary_word_fast = [" + fast.join(',') + "];");
   }
 
+  function show_words() {
+    let t0 = new Date().getTime();
+    for (let wlength = 1; wlength < 22; wlength++) {
+      //console.log('Fast index for words with ' + wlength + ' letters');
+      //console.log(dictionary_word_fast[wlength]);
+      console.log('Show ' + dictionary_word_lengths[wlength] + ' words with ' + wlength + ' letters. Stop if different using two different algorithms (takes long time)');
+      let words = give_words(wlength, 0);
+      let was_diff = '';
+      for (cnt = 0; cnt < dictionary_word_lengths[wlength]; cnt++) {
+        let letters = words.next(0).value;
+        let fast = random_word(wlength, cnt);
+        if (fast != letters) {
+          was_diff = 'yes';
+          console.log('DIFF ' + cnt +' letters|fast| ' + letters + '|' + fast + '|');
+          return;
+        } else if (was_diff) {
+          was_diff = '';
+          console.log('same ' + cnt +' ' + fast);
+        }
+  //      console.log(letters);
+      }
+      let t1 = new Date().getTime();
+      console.log("Used " + (t1 - t0) + ' ms, ' + (t1 - t0)/dictionary_word_lengths[wlength] + ' ms per word\n');
+      t0 = t1;
+    }
+  }
+
   let start = new Date().getTime();
   let times = 1;
   let show_time = true;
@@ -73,8 +100,10 @@ if (typeof(in_vm) === 'undefined') {
       if (times == "stats") {
         word_stats();
         show_time = false;
+      } else if (times == "show") {
+          show_words();
       } else {
-        console.log("Nothing to do, try 'stats'");
+        console.log("Nothing to do, try 'stats' or 'show'");
       }
 
     } else {

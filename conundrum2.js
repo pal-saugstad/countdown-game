@@ -18,12 +18,48 @@ function* give_words(size=3, skip=0) {
   while (true) yield * _give(dictionary, '');
 }
 
+function random_word(size=3, wn=-1) {
+  let skip;
+  if (wn < 0) {
+    skip = Math.floor(Math.random() * dictionary_word_lengths[size]);
+  } else {
+    skip = wn % dictionary_word_lengths[size];
+  }
+  let res = '';
+  let start = '';
+  function _next(node, answer) {
+    if (res) return;
+    if (answer.length < size) {
+      for (c in node) _next(node[c], answer+c);
+    } else if (node[0]) {
+      if (skip > 0) {
+        skip--;
+      } else {
+        res = answer;
+        return;
+      }
+    }
+  }
+  let fast = dictionary_word_fast[size];
+  let tot = 0;
+  let use = 0;
+  for (const i in fast) {
+    start = i;
+    use = tot;
+    tot += fast[i];
+    if (tot > skip) break;
+  }
+  skip -= use;
+  let start_node = dictionary;
+  for (let idx = 0; idx < start.length; idx++) start_node = start_node[start.substring(idx,idx+1)];
+  _next(start_node, start);
+  return res;
+  //console.log(fast);
+}
+
 function generate_conundrum(input = '') {
-  let skip = Math.floor(Math.random() * dictionary_word_lengths[9]);
-  let words = give_words(9, skip);
   while (true) {
-    skip = Math.floor(Math.random() * 10);
-    const letters = input ? input : words.next(skip).value;
+    const letters = random_word(9);
     const five = [];
     const nine = [];
 
