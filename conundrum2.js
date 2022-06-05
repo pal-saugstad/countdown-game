@@ -69,8 +69,11 @@ function generate_conundrum(input = '') {
     });
     shuffle(nine);
     shuffle(five);
+    let check_words = {};
+    for (const word9 of nine) for (let idx = 0; idx < 6; idx++) check_words[word9.substring(idx,idx+4)] = idx == 5 ? 1 : idx + 1;
     const nine_sorted = nine[0].split('').sort();
     for (const five_word of five) {
+      if (check_words[five_word.substring(0,4)] == 1 || check_words[five_word.substring(1,5)] == 1) continue;
       let five_sorted = five_word.split('').sort();
       let four_sorted = nine_sorted.slice();
       let i = 0;
@@ -87,17 +90,26 @@ function generate_conundrum(input = '') {
         if (word.length == 4) four_solve.push(word);
       });
       shuffle(four_solve);
+      let candidate = '';
       for (const four_word of four_solve) {
-        let check_words = {};
-        for (const word9 of nine) {
-          check_words[word9.substring(0,4)] = true;
-          check_words[word9.substring(5,9)] = true;
+        if (check_words[four_word] != 1) {
+          candidate = four_word + five_word;
+          let strong = true;
+          for (let idx = 0; idx < 6; idx++) {
+            if (check_words[candidate.substring(idx, idx+4)]) {
+              strong = false;
+              break;
+            }
+          }
+          if (strong) {
+            nine.unshift(candidate);
+            return nine;
+          }
         }
-
-        if (!check_words[four_word] && !check_words[five_word.substring(0,4)] && !check_words[five_word.substring(1,5)]) {
-          nine.unshift(Math.random() > 0.5 ? five_word + four_word : four_word + five_word);
-          return nine;
-        }
+      }
+      if (candidate) {
+        nine.unshift(candidate);
+        return nine;
       }
     }
   }
