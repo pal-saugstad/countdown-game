@@ -29,7 +29,7 @@ function _calc(vals, show_partial) {
   var big_return = ''
   while (more) {
     more = false;
-    for (idx = 0; idx < vals.length-3 && !more; idx++) {
+    for (let idx = 0; idx < vals.length-3 && !more; idx++) {
       if (!isNaN(vals[idx]) && !isNaN(vals[idx+2])) {
         if (vals[idx+1] == '*') {
           vals[idx] *= vals[idx+2]; more = true;
