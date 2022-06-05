@@ -21,21 +21,47 @@ if (typeof(in_vm) === 'undefined') {
   function word_stats() {
 
     let count = [0];
+    let fast = [0];
     for (let i = 1; i < 22; i++) {
+      const sslen = 2;
       const words = give_words(i);
       const first = words.next(0).value;
       let cnt = 0;
+      let firstcnt = 0;
+      let relcnt = 0;
       let another;
+      let start = first.substring(0,sslen);
+      let firstletter = first.substring(0,1);
+      //console.log(i + ' ' + relcnt + ' ' + cnt + ' ' + start + ' ' + first);
+      let inside = {};
+      let inside2 = {};
       do {
         cnt++;
+        firstcnt++;
+        relcnt++;
         another = words.next(0).value;
+        if (another.substring(0,sslen) != start) {
+          inside2[start] = relcnt;
+          start = another.substring(0,sslen);
+          //console.log(i + ' ' + relcnt + ' ' + cnt + ' ' + start + ' ' + another);
+          relcnt= 0;
+          if (another.substring(0,1) != firstletter) {
+            if (firstcnt < 100)            inside[firstletter] = firstcnt;
+            else for (let ltrs in inside2) inside[ltrs] = inside2[ltrs];
+            firstletter = another.substring(0,1);
+            inside2 = {};
+            firstcnt = 0;
+          }
+        }
         //console.log(another);
       } while (first != another);
       //console.log("For words with " + i + " letters, we found " + cnt);
       count.push(cnt);
+      fast.push('{'+Object.keys(inside).map((key) => [key, inside[key]].join(':')).join(',')+'}');
     }
     count.push(0);
     console.log("const dictionary_word_lengths = [" + count.join(',') + "];");
+    console.log("const dictionary_word_fast = [" + fast.join(',') + "];");
   }
 
   let start = new Date().getTime();
