@@ -27,9 +27,10 @@ function _calc(vals, show_partial) {
   //console.log('Input to _calc ---------');
   var more = true;
   var big_return = ''
+  let idx;
   while (more) {
     more = false;
-    for (let idx = 0; idx < vals.length-3 && !more; idx++) {
+    for (idx = 0; idx < vals.length-3 && !more; idx++) {
       if (!isNaN(vals[idx]) && !isNaN(vals[idx+2])) {
         if (vals[idx+1] == '*') {
           vals[idx] *= vals[idx+2]; more = true;
