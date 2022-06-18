@@ -57,7 +57,7 @@ function random_word(size=3, wn=-1) {
   //console.log(fast);
 }
 
-function generate_conundrum(input = '') {
+function generate_conundrum2(input = '') {
   while (true) {
     const letters = random_word(9);
     const five = [];
