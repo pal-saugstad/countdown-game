@@ -346,7 +346,7 @@ function autofill() {
 }
 
 function conundrum() {
-    let returned_data  = generate_conundrum();
+    let returned_data  = generate_conundrum2();
     reset();
     conundrum_clue = ".........".split('');
     seed = returned_data.shift();

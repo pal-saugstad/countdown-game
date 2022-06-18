@@ -11,6 +11,7 @@ if (typeof(in_vm) === 'undefined') {
     fs.readFileSync('dictionary.js',      'utf-8') +
     fs.readFileSync('dictionary-stats.js','utf-8') +
     fs.readFileSync('letters.js',         'utf-8') +
+    fs.readFileSync('conundrum.js',       'utf-8') +
     fs.readFileSync('conundrum2.js',      'utf-8') +
     fs.readFileSync( process.argv[1],     'utf-8');
   vm.runInContext(code, context);
@@ -108,11 +109,11 @@ if (typeof(in_vm) === 'undefined') {
 
     } else {
       console.log("Show " + times + " conundrums");
-      for (let i = 0; i < times; i++) console.log(generate_conundrum());
+      for (let i = 0; i < times; i++) console.log(generate_conundrum2());
     }
   } else {
     console.log("Show just one conundrums since no spesific number was given");
-    console.log(generate_conundrum());
+    console.log(generate_conundrum2());
   }
   let stop = new Date().getTime();
   if (times > 1) {

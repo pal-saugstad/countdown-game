@@ -57,8 +57,10 @@ function random_word(size=3, wn=-1) {
   //console.log(fast);
 }
 
-function generate_conundrum(input = '') {
+function generate_conundrum2(input = '') {
   while (true) {
+    let highest_score = 0;
+    let best_candidate;
     const letters = random_word(9);
     const five = [];
     const nine = [];
@@ -69,18 +71,15 @@ function generate_conundrum(input = '') {
     });
     shuffle(nine);
     shuffle(five);
-    let check_words = {};
-    for (const word9 of nine) for (let idx = 0; idx < 6; idx++) check_words[word9.substring(idx,idx+4)] = idx == 5 ? 1 : idx + 1;
     const nine_sorted = nine[0].split('').sort();
     for (const five_word of five) {
-      if (check_words[five_word.substring(0,4)] == 1 || check_words[five_word.substring(1,5)] == 1) continue;
       let five_sorted = five_word.split('').sort();
       let four_sorted = nine_sorted.slice();
       let i = 0;
       for (let c of five_sorted) {
         while (c != four_sorted[i]) {
           i++;
-          if (!four_sorted[i]) thow();
+          if (!four_sorted[i]) this_cannot_happen();
         }
         four_sorted[i] = '';
       }
@@ -92,23 +91,26 @@ function generate_conundrum(input = '') {
       shuffle(four_solve);
       let candidate = '';
       for (const four_word of four_solve) {
-        if (check_words[four_word] != 1) {
-          candidate = four_word + five_word;
-          let strong = true;
-          for (let idx = 0; idx < 6; idx++) {
-            if (check_words[candidate.substring(idx, idx+4)]) {
-              strong = false;
-              break;
-            }
-          }
-          if (strong) {
-            nine.unshift(candidate);
-            return nine;
+        candidate = four_word + five_word;
+        candidates = [candidate, five_word + four_word];
+        let best_local_score = 100;
+        for (const nine_word of nine) {
+          for (const cand of candidates) {
+            let score = levenshtein(cand, nine_word);
+            if (score < best_local_score) best_local_score = score;
           }
         }
+        if (best_local_score > 5) {
+          nine.unshift(candidate);
+          return nine;
+        }
+        if (best_local_score > highest_score) {
+          highest_score = best_local_score;
+          best_candidate = candidate;
+        }
       }
-      if (candidate) {
-        nine.unshift(candidate);
+      if (highest_score > 4) {
+        nine.unshift(best_candidate);
         return nine;
       }
     }
