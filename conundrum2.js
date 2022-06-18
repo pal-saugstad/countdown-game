@@ -91,24 +91,22 @@ function generate_conundrum2(input = '') {
       shuffle(four_solve);
       let candidate = '';
       for (const four_word of four_solve) {
-        if (true) {
-          candidate = four_word + five_word;
-          candidates = [candidate, five_word + four_word];
-          let best_local_score = 100;
-          for (const nine_word of nine) {
-            for (const cand of candidates) {
-              let score = levenshtein(cand, nine_word);
-              if (score < best_local_score) best_local_score = score;
-            }
+        candidate = four_word + five_word;
+        candidates = [candidate, five_word + four_word];
+        let best_local_score = 100;
+        for (const nine_word of nine) {
+          for (const cand of candidates) {
+            let score = levenshtein(cand, nine_word);
+            if (score < best_local_score) best_local_score = score;
           }
-          if (best_local_score > 5) {
-            nine.unshift(candidate);
-            return nine;
-          }
-          if (best_local_score > highest_score) {
-            highest_score = best_local_score;
-            best_candidate = candidate;
-          }
+        }
+        if (best_local_score > 5) {
+          nine.unshift(candidate);
+          return nine;
+        }
+        if (best_local_score > highest_score) {
+          highest_score = best_local_score;
+          best_candidate = candidate;
         }
       }
       if (highest_score > 4) {
