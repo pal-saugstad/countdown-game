@@ -350,11 +350,13 @@ function solve_numbers(inputs) {
       prev_is_digit = is_digit;
     }
     var ret_val = '';
-    if (abs_diff)
-      ret_val = '<div>NO results. Found ' + no_of_same_res + ' equations which are Off by ' + abs_diff + '</div>';
-    else
-      ret_val = '<div>Found ' + no_of_same_res + ' equations. The best result is using ' + no_of_num + ' input values</div>';
-    ret_val +=  '<div class="res_best">\n' + res_best + '</div>' +
-                '<div class="res_all">\n' + s.join("\n") + '</div>';
+    if (abs_diff) {
+      let offby = no_of_same_res < 2 ? ' which is' : 's which are';
+      ret_val = `NO results. Found ${no_of_same_res} equation${offby} Off by ${abs_diff}\n`;
+    } else {
+      let plural = no_of_same_res < 2 ? '' : 's';
+      ret_val = `Found ${no_of_same_res} equation${plural}. The best result is using ${no_of_num} input values\n`;
+    }
+    ret_val +=  '\n' + s.join("\n");
     return ret_val;
 }
