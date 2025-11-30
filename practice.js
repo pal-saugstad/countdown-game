@@ -630,8 +630,8 @@ function shownumbersanswer() {
 
     for (var i = 1; i <= 6; i++)
         numbers.push(parseInt($('#number' + i).html()));
-
-    $('#answer').html(solve_numbers(numbers, target, false));
+    numbers.push(parseInt(target));
+    $('#answer').html(solve_numbers(numbers));
 }
 
 function showanswer() {

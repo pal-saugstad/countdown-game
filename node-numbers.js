@@ -15,10 +15,8 @@ if (typeof(in_vm) === 'undefined') {
 } else {
 
   // code to run in vm as the last "included" file (see readFileSync above)
-  input = [0,0,'-h',1,1,1,1,1,1,0];
-  for (n in input_args) if (n < 10) input[n] = parseInt(input_args[n]);
-  var show_all = input.pop();
-  var target = input.pop();
+  input = [0,0,'-h',1,1,1,1,1,100];
+  for (n in input_args) if (n < 9) input[n] = parseInt(input_args[n]);
   input.shift();
   input.shift();
   var help = input[0] == '-h';
@@ -42,8 +40,8 @@ if (typeof(in_vm) === 'undefined') {
   } else {
     let start = new Date().getTime();
     console.log('');
-    console.log(solve_numbers(input, target, show_all == 1));
-    console.log('Input:', input, ', Target:', [target], ', Show:', [show_all == 1 ? 'All results' : 'Best result' ]);
+    console.log('Input:', input);
+    console.log(solve_numbers(input));
     let stop = new Date().getTime();
     console.log('Duration: ' + (stop - start) + ' ms');
   }

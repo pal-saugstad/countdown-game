@@ -79,8 +79,12 @@ function _calc(vals, show_partial) {
  * if an input array is defined, check that only numbers found in that array is used
  * if input array is [], write result as many reduced versions of the input formula
  */
-function calculate_formula(input, formula='') {
+function calculate_formula(inputs, formula='') {
 
+  let input = inputs.map(function(x) { return [parseInt(x)] });
+  input.sort(function(a,b) {
+    return a[0] > b[0];
+  });
   formula += ' ';
   var in_number = false;
   var number = 0;
@@ -302,7 +306,13 @@ function stringify_result2(result, outer_op='+') {
 
 var spaces = '                                                ';
 
-function solve_numbers(numbers, target, show_all) {
+function solve_numbers(inputs) {
+
+    let numbers = inputs.map(function(x) { return [parseInt(x)] });
+    let target = numbers.pop();
+    numbers.sort(function(a,b) {
+      return a[0] > b[0];
+    });
 
     abs_diff = Math.abs(numbers[0] - target) + 1;
     calculations = 0;
@@ -318,11 +328,6 @@ function solve_numbers(numbers, target, show_all) {
           got[val.toString()] = 1;
         }
     }
-
-    numbers = numbers.map(function(x) { return [x] });
-    numbers.sort(function(a,b) {
-      return a[0] > b[0];
-    });
 
     /* attempt to solve with dfs */
     _recurse_solve_numbers(numbers, 0, target);
