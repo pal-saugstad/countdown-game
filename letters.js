@@ -68,7 +68,7 @@ function solve_letters_matrix(letters) {
 
   var result = [];
   var res = [];
-
+  let noof = letters.length;
   solve_letters(letters.toLowerCase(), function(word) { result.push(word); });
 
   result.sort();
@@ -89,18 +89,16 @@ function solve_letters_matrix(letters) {
 
   var spaces = '                                                                        ';
 
-  var stats_best = '<div>Found '
-        + result.length
-        + ' words of which '
-        + no_of_words[max_word_length]
-        + ' words have '
-        + max_word_length
-        + ' letters\n</div>'
-        + '<div class="res_best">\n';
-  for (i = 0; i < no_of_words[max_word_length]; i ++ ) {
-    stats_best += out_matrix[max_word_length][i] + " ";
+  let letters_warn = noof != 9 ? ` from the ${noof} letters input`: '';
+  let stats_best = `Found ${result.length} words of which ${no_of_words[max_word_length]}`
+        + ` words have ${max_word_length} letters${letters_warn}\n\n`;
+  delim = '';
+  for (let i=0; i<noof;) {
+    i++;
+    stats_best += `${delim}${i}`;
+    if (delim == '') delim += '  ';
+    if (i & 1) delim += '  ';
   }
-  stats_best += '</div><div class="res_all">\n1    2    3      4      5        6        7          8          9';
   res.push(stats_best);
   var row = 'init';
   for (i = 0; row.length > 0; i++) {
@@ -116,6 +114,5 @@ function solve_letters_matrix(letters) {
     }
     res.push(row);
   }
-  res.push('</div>');
   return res.join('\n');
 }
