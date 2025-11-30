@@ -139,7 +139,6 @@ function calculate_formula(inputs, formula='') {
 
 var got = {};
 var abs_diff;
-var calculations = 0;
 
 /**
  * OPS basic calculation operations (+ - * /)
@@ -203,7 +202,6 @@ function _recurse_solve_numbers(numbers, searchedi, target) {
                 if (r === false)
                     continue;
                 var new_abs_diff = Math.abs(r[0]-target);
-                calculations++;
                 if (new_abs_diff < abs_diff) {
                   got = {};
                   abs_diff = new_abs_diff;
@@ -315,11 +313,9 @@ function solve_numbers(inputs) {
     });
 
     abs_diff = Math.abs(numbers[0] - target) + 1;
-    calculations = 0;
 
     for (var val of numbers) {
         var new_abs_diff = Math.abs(val - target);
-        calculations++;
         if (new_abs_diff < abs_diff) {
           got = {};
           abs_diff = new_abs_diff;
